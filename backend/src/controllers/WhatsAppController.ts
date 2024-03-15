@@ -22,6 +22,7 @@ interface WhatsappData {
   token?: string;
   sendIdQueue?: number;
   timeSendQueue?: number;
+  promptId?: number;
 }
 
 interface QueryParams {
@@ -48,6 +49,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     token,
     timeSendQueue,
     sendIdQueue,
+    promptId
   }: WhatsappData = req.body;
   const { companyId } = req.user;
 
@@ -63,6 +65,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     token,
     timeSendQueue,
     sendIdQueue,
+    promptId
   });
 
   StartWhatsAppSession(whatsapp, companyId);

@@ -26,7 +26,7 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
 };
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
-  const { name, color, greetingMessage, outOfHoursMessage, schedules } =
+  const { name, color, greetingMessage, outOfHoursMessage, schedules, orderQueue } =
     req.body;
   const { companyId } = req.user;
 
@@ -36,7 +36,8 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     greetingMessage,
     companyId,
     outOfHoursMessage,
-    schedules
+    schedules,
+    orderQueue: orderQueue === "" ? null : orderQueue,
   });
 
   const io = getIO();

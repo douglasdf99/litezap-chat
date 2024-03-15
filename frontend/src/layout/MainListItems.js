@@ -40,7 +40,7 @@ import BorderColorIcon from '@material-ui/icons/BorderColor';
 import ToDoList from "../pages/ToDoList/";
 import toastError from "../errors/toastError";
 import { makeStyles } from "@material-ui/core/styles";
-
+import { AllInclusive, AttachFile, BlurCircular } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   ListSubheader: {
@@ -420,6 +420,11 @@ const MainListItems = (props) => {
               />
             )}
             <ListItemLink
+              to="/prompts"
+              primary={i18n.t("mainDrawer.listItems.prompts")}
+              icon={<BlurCircular />}
+            />
+            <ListItemLink
               to="/connections"
               primary={i18n.t("mainDrawer.listItems.connections")}
               icon={
@@ -427,6 +432,11 @@ const MainListItems = (props) => {
                   <SyncAltIcon />
                 </Badge>
               }
+            />
+             <ListItemLink
+              to="/files"
+              primary={i18n.t("mainDrawer.listItems.files")}
+              icon={<AttachFile />}
             />
             <ListItemLink
               to="/queues"

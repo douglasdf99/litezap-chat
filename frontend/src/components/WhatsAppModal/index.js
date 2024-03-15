@@ -79,6 +79,19 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
   const [whatsApp, setWhatsApp] = useState(initialState);
   const [selectedQueueIds, setSelectedQueueIds] = useState([]);
   const [queues, setQueues] = useState([]);
+  const [selectedPrompt, setSelectedPrompt] = useState(null);
+  const [prompts, setPrompts] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await api.get("/prompt");
+        setPrompts(data.prompts);
+      } catch (err) {
+        toastError(err);
+      }
+    })();
+  }, [whatsAppId]);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -88,6 +101,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
         const { data } = await api.get(`whatsapp/${whatsAppId}?session=0`);
         console.log(data)
         setWhatsApp(data);
+        data.promptId ? setSelectedPrompt(data.promptId) : setSelectedPrompt(null);
 
         const whatsQueueIds = data.queues?.map((queue) => queue.id);
         setSelectedQueueIds(whatsQueueIds);
@@ -110,7 +124,10 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
   }, []);
 
   const handleSaveWhatsApp = async (values) => {
-    const whatsappData = { ...values, queueIds: selectedQueueIds };
+    const whatsappData = {
+      ...values, queueIds: selectedQueueIds,
+      promptId: selectedPrompt ? selectedPrompt : null
+    };
     delete whatsappData["queues"];
     delete whatsappData["session"];
 
@@ -125,6 +142,16 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
     } catch (err) {
       toastError(err);
     }
+  };
+
+  const handleChangeQueue = (e) => {
+    setSelectedQueueIds(e);
+    setSelectedPrompt(null);
+  };
+
+  const handleChangePrompt = (e) => {
+    setSelectedPrompt(e.target.value);
+    setSelectedQueueIds([]);
   };
 
   const handleClose = () => {
@@ -279,8 +306,46 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                 </div>
                 <QueueSelect
                   selectedQueueIds={selectedQueueIds}
-                  onChange={(selectedIds) => setSelectedQueueIds(selectedIds)}
-                />
+                  onChange={(selectedIds) => handleChangeQueue(selectedIds)}
+                  />
+                <FormControl
+                  margin="dense"
+                  variant="outlined"
+                  fullWidth
+                >
+                  <InputLabel>
+                    {i18n.t("whatsappModal.form.prompt")}
+                  </InputLabel>
+                  <Select
+                    labelId="dialog-select-prompt-label"
+                    id="dialog-select-prompt"
+                    name="promptId"
+                    value={selectedPrompt || ""}
+                    onChange={handleChangePrompt}
+                    label={i18n.t("whatsappModal.form.prompt")}
+                    fullWidth
+                    MenuProps={{
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                      getContentAnchorEl: null,
+                    }}
+                  >
+                    {prompts.map((prompt) => (
+                      <MenuItem
+                        key={prompt.id}
+                        value={prompt.id}
+                      >
+                        {prompt.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
                 <div>
                   <h3>{i18n.t("whatsappModal.form.queueRedirection")}</h3>
                   <p>{i18n.t("whatsappModal.form.queueRedirectionDesc")}</p>

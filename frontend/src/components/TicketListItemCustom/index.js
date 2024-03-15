@@ -265,22 +265,27 @@ const useStyles = makeStyles((theme) => ({
                 status: "open",
                 userId: user?.id,
             });
-
+            
             let settingIndex;
 
             try {
                 const { data } = await api.get("/settings/");
+                
                 settingIndex = data.filter((s) => s.key === "sendGreetingAccepted");
+                
             } catch (err) {
                 toastError(err);
+                   
             }
-
+            
             if (settingIndex[0].value === "enabled" && !ticket.isGroup) {
                 handleSendMessage(ticket.id);
+                
             }
 
         } catch (err) {
             setLoading(false);
+            
             toastError(err);
         }
         if (isMounted.current) {
@@ -291,9 +296,9 @@ const useStyles = makeStyles((theme) => ({
         // handleChangeTab(null, "open");
         history.push(`/tickets/${ticket.uuid}`);
     };
-	
 	    const handleSendMessage = async (id) => {
-        const msg = `{{ms}} *{{name}}*, meu nome é *${user?.name}* e agora vou prosseguir com seu atendimento!`;
+        
+        const msg = user.greetingMessage ? user.greetingMessage : `{{ms}} *{{name}}*, meu nome é *${user?.name}* e agora vou prosseguir com seu atendimento!`;
         const message = {
             read: 1,
             fromMe: true,
@@ -304,6 +309,7 @@ const useStyles = makeStyles((theme) => ({
             await api.post(`/messages/${id}`, message);
         } catch (err) {
             toastError(err);
+            
         }
     };
 	{/*CÓDIGO NOVO SAUDAÇÃO*/}
@@ -490,7 +496,7 @@ const useStyles = makeStyles((theme) => ({
           {ticket.status === "pending" && (
             <ButtonWithSpinner
               //color="primary"
-              style={{ backgroundColor: 'green', color: 'white', padding: '0px', bottom: '17px', borderRadius: '0px', left: '8px', fontSize: '0.6rem' }}
+              style={{ backgroundColor: 'green', color: 'white', padding: '0px', bottom: '17px', borderRadius: '0px', left: '8px', fontSize: '0.6rem', marginBottom: '5px' }}
               variant="contained"
               className={classes.acceptButton}
               size="small"

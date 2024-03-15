@@ -218,7 +218,7 @@ const TicketsListCustom = (props) => {
     });
 
     socket.on(`company-${companyId}-ticket`, (data) => {
-      console.log(data)
+      
       if (data.action === "updateUnread") {
         dispatch({
           type: "RESET_UNREAD",

@@ -47,7 +47,6 @@ const SetTicketMessagesAsRead = async (ticket: Ticket): Promise<void> => {
       }
     );
   } catch (err) {
-    console.log(err);
     logger.warn(
       `Could not mark messages as read. Maybe whatsapp session disconnected? Err: ${err}`
     );

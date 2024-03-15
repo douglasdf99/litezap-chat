@@ -135,7 +135,7 @@ export const kanban = async (req: Request, res: Response): Promise<Response> => 
   if (userIdsStringified) {
     usersIds = JSON.parse(userIdsStringified);
   }
-  
+
   const { tickets, count, hasMore } = await ListTicketsServiceKanban({
     searchParam,
     tags: tagsIds,

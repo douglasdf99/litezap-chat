@@ -71,27 +71,29 @@ const Ticket = () => {
   useEffect(() => {
     setLoading(true);
     const delayDebounceFn = setTimeout(() => {
-      const fetchTicket = async () => {
-        try {
-          const { data } = await api.get("/tickets/u/" + ticketId);
-          const { queueId } = data;
-          const { queues, profile } = user;
-
-          const queueAllowed = queues.find((q) => q.id === queueId);
-          if (queueAllowed === undefined && profile !== "admin") {
-            toast.error("Acesso não permitido");
-            history.push("/tickets");
-            return;
-          }
-
-          setContact(data.contact);
-          setTicket(data);
-          setLoading(false);
-        } catch (err) {
-          setLoading(false);
-          toastError(err);
-        }
-      };
+        const fetchTicket = async () => {
+            try {
+              const { data } = await api.get("/tickets/u/" + ticketId);
+              const { queueId } = data;
+              const { queues, profile } = user;
+    
+              const queueAllowed = queues.find((q) => q.id === queueId);
+              if (queueAllowed === undefined && profile !== "admin") {
+                toast.error("Acesso não permitido");
+                history.push("/tickets");
+                return;
+              }
+    
+              setContact(data.contact);
+              setTicket(data);
+              setLoading(false);
+            } catch (err) {
+              setLoading(false);
+              toastError(err);
+            }
+          
+        };
+        if(ticketId === 'undefined') history.push("/tickets")
       fetchTicket();
     }, 500);
     return () => clearTimeout(delayDebounceFn);

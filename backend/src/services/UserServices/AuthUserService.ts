@@ -14,6 +14,8 @@ interface SerializedUser {
   name: string;
   email: string;
   profile: string;
+  greetingMessage: string;
+  transferMessage: string;
   queues: Queue[];
   companyId: number;
 }

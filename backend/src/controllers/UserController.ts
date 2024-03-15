@@ -41,7 +41,10 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     name,
     profile,
     companyId: bodyCompanyId,
-    queueIds
+    queueIds,
+    whatsappId,
+    greetingMessage,
+    transferMessage
   } = req.body;
   let userCompanyId: number | null = null;
 
@@ -65,7 +68,10 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     name,
     profile,
     companyId: bodyCompanyId || userCompanyId,
-    queueIds
+    queueIds,
+    whatsappId,
+    greetingMessage,
+    transferMessage
   });
 
   const io = getIO();
@@ -81,7 +87,6 @@ export const show = async (req: Request, res: Response): Promise<Response> => {
   const { userId } = req.params;
 
   const user = await ShowUserService(userId);
-
   return res.status(200).json(user);
 };
 
@@ -103,7 +108,6 @@ export const update = async (
     companyId,
     requestUserId: +requestUserId
   });
-
   const io = getIO();
   io.emit(`company-${companyId}-user`, {
     action: "update",

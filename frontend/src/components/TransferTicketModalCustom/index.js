@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useHistory } from "react-router-dom";
 
 import Button from "@material-ui/core/Button";
@@ -9,7 +9,9 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core";
-
+import Typography from "@material-ui/core/Typography";
+import {  ListItemText } from "@material-ui/core";
+import { AuthContext } from "../../context/Auth/AuthContext";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -43,6 +45,10 @@ const TransferTicketModalCustom = ({ modalOpen, onClose, ticketid }) => {
   const [searchParam, setSearchParam] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedQueue, setSelectedQueue] = useState("");
+  const [selectedWhatsapp, setSelectedWhatsapp] = useState("");
+  const [whatsapps, setWhatsapps] = useState([]);
+  const { user } = useContext(AuthContext);
+  const { companyId, whatsappId } = user;
   const classes = useStyles();
   const { findAll: findAllQueues } = useQueues();
   const isMounted = useRef(true);
@@ -52,6 +58,28 @@ const TransferTicketModalCustom = ({ modalOpen, onClose, ticketid }) => {
       isMounted.current = false;
     };
   }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    const delayDebounceFn = setTimeout(() => {
+      const fetchContacts = async () => {
+        api
+          .get(`/whatsapp`, { params: { companyId, session: 0 } })
+          .then(({ data }) => setWhatsapps(data));
+      };
+
+      if (whatsappId !== null && whatsappId!== undefined) {
+        setSelectedWhatsapp(whatsappId)
+      }
+
+      if (user.queues.length === 1) {
+        setSelectedQueue(user.queues[0].id)
+      }
+      fetchContacts();
+      setLoading(false);
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [])
 
   useEffect(() => {
     if (isMounted.current) {
@@ -115,6 +143,10 @@ const TransferTicketModalCustom = ({ modalOpen, onClose, ticketid }) => {
           data.status = "pending";
           data.userId = null;
         }
+      }
+
+      if(selectedWhatsapp && selectedWhatsapp !== null){
+        data.whatsappId = selectedWhatsapp;
       }
 
       await api.put(`/tickets/${ticketid}`, data);
@@ -187,6 +219,52 @@ const TransferTicketModalCustom = ({ modalOpen, onClose, ticketid }) => {
                 </MenuItem>
               ))}
             </Select>
+          </FormControl>
+          <FormControl variant="outlined" style={{marginTop: "15px"}} className={classes.maxWidth}>
+            <Select
+                  required
+                  fullWidth
+                  displayEmpty
+                  variant="outlined"
+                  value={selectedWhatsapp}
+                  onChange={(e) => {
+                    setSelectedWhatsapp(e.target.value)
+                  }}
+                  MenuProps={{
+                    anchorOrigin: {
+                      vertical: "bottom",
+                      horizontal: "left",
+                    },
+                    transformOrigin: {
+                      vertical: "top",
+                      horizontal: "left",
+                    },
+                    getContentAnchorEl: null,
+                  }}
+                  renderValue={() => {
+                    if (selectedWhatsapp === "") {
+                      return "Selecione uma Conexão"
+                    }
+                    const whatsapp = whatsapps.find(w => w.id === selectedWhatsapp)
+                    return whatsapp.name
+                  }}
+                >
+                  {whatsapps?.length > 0 &&
+                    whatsapps.map((whatsapp, key) => (
+                      <MenuItem dense key={key} value={whatsapp.id}>
+                        <ListItemText
+                          primary={
+                            <>
+                              {/* {IconChannel(whatsapp.channel)} */}
+                              <Typography component="span" style={{ fontSize: 14, marginLeft: "10px", display: "inline-flex", alignItems: "center", lineHeight: "2" }}>
+                                {whatsapp.name} &nbsp; <p className={(whatsapp.status) === 'CONNECTED' ? classes.online : classes.offline} >({whatsapp.status})</p>
+                              </Typography>
+                            </>
+                          }
+                        />
+                      </MenuItem>
+                    ))}
+                </Select>
           </FormControl>
         </DialogContent>
         <DialogActions>

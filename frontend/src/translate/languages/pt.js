@@ -110,8 +110,9 @@ const messages = {
           default: "Padrão",
           sendIdQueue: "Fila",
           timeSendQueue: "Redirecionar para fila em X minutos",
-          queueRedirection:"Redirecionamento de Fila",
-          queueRedirectionDesc:"Selecione uma fila para os contatos que não possuem fila serem redirecionados",
+          queueRedirection: "Redirecionamento de Fila",
+          queueRedirectionDesc: "Selecione uma fila para os contatos que não possuem fila serem redirecionados",
+          prompt: "Prompt",
 
         },
         buttons: {
@@ -146,6 +147,45 @@ const messages = {
           whatsapp: "WhatsApp",
           email: "Email",
           actions: "Ações",
+        },
+      },
+      promptModal: {
+        form: {
+          name: "Nome",
+          prompt: "Prompt",
+          voice: "Voz",
+          max_tokens: "Máximo de Tokens na resposta",
+          temperature: "Temperatura",
+          apikey: "API Key",
+          max_messages: "Máximo de mensagens no Histórico",
+          voiceKey: "Chave da API de Voz",
+          voiceRegion: "Região de Voz",
+        },
+        success: "Prompt salvo com sucesso!",
+        title: {
+          add: "Adicionar Prompt",
+          edit: "Editar Prompt",
+        },
+        buttons: {
+          okAdd: "Adicionar",
+          okEdit: "Salvar",
+          cancel: "Cancelar",
+        },
+      },
+      prompts: {
+        title: "Prompts",
+        table: {
+          name: "Nome",
+          queue: "Setor/Fila",
+          max_tokens: "Máximo Tokens Resposta",
+          actions: "Ações",
+        },
+        confirmationModal: {
+          deleteTitle: "Excluir",
+          deleteMessage: "Você tem certeza? Essa ação não pode ser revertida!",
+        },
+        buttons: {
+          add: "Adicionar Prompt",
         },
       },
       contactModal: {
@@ -183,6 +223,7 @@ const messages = {
           outOfHoursMessage: "Mensagem de fora de expediente",
           ratingMessage: "Mensagem de avaliação",
           token: "Token",
+          orderQueue: "Ordem da fila (Bot)",
         },
         buttons: {
           okAdd: "Adicionar",
@@ -200,6 +241,9 @@ const messages = {
           email: "Email",
           password: "Senha",
           profile: "Perfil",
+          whatsapp: "Conexão Padrão",
+          greetingMessage : "Mensagem de saudação",
+          transferMessage : "Mensagem de transferência"
         },
         buttons: {
           okAdd: "Adicionar",
@@ -250,7 +294,7 @@ const messages = {
           titleUploadMsgDragDrop: "ARRASTE E SOLTE ARQUIVOS NO CAMPO ABAIXO",
           titleFileList: "Lista de arquivo(s)"
         },
-      },      
+      },
       ticketsManager: {
         buttons: {
           newTicket: "Novo",
@@ -329,12 +373,36 @@ const messages = {
           annoucements: "Informativos",
           chats: "Chat Interno",
           financeiro: "Financeiro",
+          files: "Lista de arquivos",
+          prompts: "Open.Ai",
         },
         appBar: {
           user: {
             profile: "Perfil",
             logout: "Sair",
           },
+        },
+      },
+      files: {
+        title: "Lista de arquivos",
+        table: {
+          name: "Nome",
+          contacts: "Contatos",
+          actions: "Ação",
+        },
+        toasts: {
+          deleted: "Lista excluída com sucesso!",
+          deletedAll: "Todas as listas foram excluídas com sucesso!",
+        },
+        buttons: {
+          add: "Adicionar",
+          deleteAll: "Deletar Todos",
+        },
+        confirmationModal: {
+          deleteTitle: "Deletar",
+          deleteAllTitle: "Deletar Todos",
+          deleteMessage: "Tem certeza que deseja deletar esta lista?",
+          deleteAllMessage: "Tem certeza que deseja deletar todas as listas?",
         },
       },
       messagesAPI: {
@@ -356,12 +424,50 @@ const messages = {
       },
       quickMessages: {
         title: "Respostas Rápidas",
+        searchPlaceholder: "Pesquisar...",
+        noAttachment: "Sem anexo",
+        confirmationModal: {
+          deleteTitle: "Exclusão",
+          deleteMessage: "Esta ação é irreversível! Deseja prosseguir?",
+        },
         buttons: {
-          add: "Nova Resposta",
+          add: "Adicionar",
+          attach: "Anexar Arquivo",
+          cancel: "Cancelar",
+          edit: "Editar",
+        },
+        toasts: {
+          success: "Atalho adicionado com sucesso!",
+          deleted: "Atalho removido com sucesso!",
         },
         dialog: {
+          title: "Mensagem Rápida",
           shortcode: "Atalho",
           message: "Resposta",
+          save: "Salvar",
+          cancel: "Cancelar",
+          geral: "Permitir editar",
+          add: "Adicionar",
+          edit: "Editar",
+          visao: "Permitir visão",
+        },
+        table: {
+          shortcode: "Atalho",
+          message: "Mensagem",
+          actions: "Ações",
+          mediaName: "Nome do Arquivo",
+          status: "Status",
+        },
+      },
+      messageVariablesPicker: {
+        label: "Variavéis disponíveis",
+        vars: {
+          contactFirstName: "Primeiro Nome",
+          contactName: "Nome",
+          greeting: "Saudação",
+          protocolNumber: "Protocolo",
+          date: "Data",
+          hour: "Hora",
         },
       },
       contactLists: {
@@ -466,6 +572,8 @@ const messages = {
             scheduledAt: "Agendamento",
             confirmation: "Confirmação",
             contactList: "Lista de Contato",
+            tagList: "Lista de Tags",
+            fileList: "Lista de Arquivos"
           },
           buttons: {
             add: "Adicionar",
@@ -489,6 +597,8 @@ const messages = {
         },
       },
       announcements: {
+        active: 'Ativo',
+        inactive: 'Inativo',
         title: "Informativos",
         searchPlaceholder: "Pesquisa",
         buttons: {
@@ -543,6 +653,7 @@ const messages = {
           color: "Cor",
           greeting: "Mensagem de saudação",
           actions: "Ações",
+          orderQueue: "Ordenação da fila (bot)",
         },
         buttons: {
           add: "Adicionar fila",
@@ -655,6 +766,26 @@ const messages = {
           edit: "Editar contato",
         },
         extraInfo: "Outras informações",
+      },
+      fileModal: {
+        title: {
+          add: "Adicionar lista de arquivos",
+          edit: "Editar lista de arquivos",
+        },
+        buttons: {
+          okAdd: "Salvar",
+          okEdit: "Editar",
+          cancel: "Cancelar",
+          fileOptions: "Adicionar arquivo",
+        },
+        form: {
+          name: "Nome da lista de arquivos",
+          message: "Detalhes da lista",
+          fileOptions: "Lista de arquivos",
+          extraName: "Mensagem para enviar com arquivo",
+          extraValue: "Valor da opção",
+        },
+        success: "Lista de arquivos salva com sucesso!",
       },
       ticketOptionsMenu: {
         schedule: "Agendamento",

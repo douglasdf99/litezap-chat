@@ -20,6 +20,7 @@ interface Request {
   provider?: string;
   sendIdQueue?: number;
   timeSendQueue?: number;
+  promptId?: number;
 }
 
 interface Response {
@@ -41,6 +42,7 @@ const CreateWhatsAppService = async ({
   provider = "beta",
   timeSendQueue,
   sendIdQueue,
+  promptId
 }: Request): Promise<Response> => {
   const company = await Company.findOne({
     where: {
@@ -145,6 +147,7 @@ const CreateWhatsAppService = async ({
       provider,
       timeSendQueue,
       sendIdQueue,
+      promptId
     },
     { include: ["queues"] }
   );

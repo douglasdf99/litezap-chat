@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useContext } from "react";
 import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -30,6 +31,7 @@ import toastError from "../../errors/toastError";
 import { Grid } from "@material-ui/core";
 import { isArray } from "lodash";
 import { socketConnection } from "../../services/socket";
+import { AuthContext } from "../../context/Auth/AuthContext";
 
 const reducer = (state, action) => {
   if (action.type === "LOAD_ANNOUNCEMENTS") {
@@ -82,7 +84,8 @@ const reducer = (state, action) => {
 const useStyles = makeStyles((theme) => ({
   mainPaper: {
     flex: 1,
-    padding: theme.spacing(1),
+    // padding: theme.spacing(1),
+    padding: theme.padding,
     overflowY: "scroll",
     ...theme.scrollbarStyles,
   },
@@ -90,6 +93,9 @@ const useStyles = makeStyles((theme) => ({
 
 const Announcements = () => {
   const classes = useStyles();
+  const history = useHistory();
+
+  const { user } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
@@ -100,6 +106,20 @@ const Announcements = () => {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [searchParam, setSearchParam] = useState("");
   const [announcements, dispatch] = useReducer(reducer, []);
+
+  // trava para nao acessar pagina que não pode  
+  useEffect(() => {
+    async function fetchData() {
+      if (!user.super) {
+        toast.error("Esta empresa não possui permissão para acessar essa página! Estamos lhe redirecionando.");
+        setTimeout(() => {
+          history.push(`/`)
+        }, 1000);
+      }
+    }
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     dispatch({ type: "RESET" });
@@ -116,8 +136,8 @@ const Announcements = () => {
   }, [searchParam, pageNumber]);
 
   useEffect(() => {
-    const companyId = localStorage.getItem("companyId");
-    const socket = socketConnection({ companyId });
+    const companyId = user.companyId;
+    const socket = socketConnection({ companyId, userId: user.id });
 
     socket.on(`company-announcement`, (data) => {
       if (data.action === "update" || data.action === "create") {
@@ -164,9 +184,13 @@ const Announcements = () => {
     setAnnouncementModalOpen(true);
   };
 
-  const handleDeleteAnnouncement = async (announcementId) => {
+  const handleDeleteAnnouncement = async (announcement) => {
     try {
-      await api.delete(`/announcements/${announcementId}`);
+      if (announcement.mediaName)
+      await api.delete(`/announcements/${announcement.id}/media-upload`);
+
+      await api.delete(`/announcements/${announcement.id}`);
+      
       toast.success(i18n.t("announcements.toasts.deleted"));
     } catch (err) {
       toastError(err);
@@ -201,17 +225,16 @@ const Announcements = () => {
   };
 
   return (
-    <MainContainer>
+    <MainContainer >
       <ConfirmationModal
         title={
           deletingAnnouncement &&
-          `${i18n.t("announcements.confirmationModal.deleteTitle")} ${
-            deletingAnnouncement.name
+          `${i18n.t("announcements.confirmationModal.deleteTitle")} ${deletingAnnouncement.name
           }?`
         }
         open={confirmModalOpen}
         onClose={setConfirmModalOpen}
-        onConfirm={() => handleDeleteAnnouncement(deletingAnnouncement.id)}
+        onConfirm={() => handleDeleteAnnouncement(deletingAnnouncement)}
       >
         {i18n.t("announcements.confirmationModal.deleteMessage")}
       </ConfirmationModal>
@@ -228,7 +251,7 @@ const Announcements = () => {
       <MainHeader>
         <Grid style={{ width: "99.6%" }} container>
           <Grid xs={12} sm={8} item>
-            <Title>{i18n.t("announcements.title")}</Title>
+            <Title>{i18n.t("announcements.title")} ({announcements.length})</Title>
           </Grid>
           <Grid xs={12} sm={4} item>
             <Grid spacing={2} container>
@@ -296,10 +319,10 @@ const Announcements = () => {
                     {translatePriority(announcement.priority)}
                   </TableCell>
                   <TableCell align="center">
-                    {announcement.mediaName ?? "Sem anexo"}
+                    {announcement.mediaName ?? i18n.t("quickMessages.noAttachment")}
                   </TableCell>
                   <TableCell align="center">
-                    {announcement.status ? "ativo" : "inativo"}
+                    {announcement.status ? i18n.t("announcements.active") : i18n.t("announcements.inactive")}
                   </TableCell>
                   <TableCell align="center">
                     <IconButton
@@ -326,8 +349,8 @@ const Announcements = () => {
           </TableBody>
         </Table>
       </Paper>
-    </MainContainer>
-  );
+    </MainContainer >
+  )
 };
 
 export default Announcements;

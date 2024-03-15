@@ -134,7 +134,7 @@ const Kanban = () => {
                 <button 
                   className={classes.button} 
                   onClick={() => {
-                    console.log(ticket.uuid)
+                    
                     handleCardClick(ticket.uuid)
                   }}>
                     Ver Ticket

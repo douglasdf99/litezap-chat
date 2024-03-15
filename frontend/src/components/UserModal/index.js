@@ -25,6 +25,7 @@ import toastError from "../../errors/toastError";
 import QueueSelect from "../QueueSelect";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { Can } from "../Can";
+import useWhatsApps from "../../hooks/useWhatsApps";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -73,23 +74,29 @@ const UserModal = ({ open, onClose, userId }) => {
 		email: "",
 		password: "",
 		profile: "user",
+		greetingMessage: "",
+		transferMessage: ""
 	};
 
 	const { user: loggedInUser } = useContext(AuthContext);
 
 	const [user, setUser] = useState(initialState);
 	const [selectedQueueIds, setSelectedQueueIds] = useState([]);
+	const [whatsappId, setWhatsappId] = useState(false);
+	const { loading, whatsApps } = useWhatsApps();
 
 	useEffect(() => {
 		const fetchUser = async () => {
 			if (!userId) return;
 			try {
 				const { data } = await api.get(`/users/${userId}`);
+				console.log(data)
 				setUser(prevState => {
 					return { ...prevState, ...data };
 				});
 				const userQueueIds = data.queues?.map(queue => queue.id);
 				setSelectedQueueIds(userQueueIds);
+				setWhatsappId(data.whatsappId ? data.whatsappId : '');
 			} catch (err) {
 				toastError(err);
 			}
@@ -104,7 +111,7 @@ const UserModal = ({ open, onClose, userId }) => {
 	};
 
 	const handleSaveUser = async values => {
-		const userData = { ...values, queueIds: selectedQueueIds };
+		const userData = { ...values, whatsappId, queueIds: selectedQueueIds };
 		try {
 			if (userId) {
 				await api.put(`/users/${userId}`, userData);
@@ -221,6 +228,59 @@ const UserModal = ({ open, onClose, userId }) => {
 										/>
 									)}
 								/>
+								<Can
+									role={loggedInUser.profile}
+									perform="user-modal:editProfile"
+									yes={() => (
+										<FormControl variant="outlined" margin="dense" className={classes.maxWidth} fullWidth>
+											<InputLabel>
+												{i18n.t("userModal.form.whatsapp")}
+											</InputLabel>
+											<Field
+												as={Select}
+												value={whatsappId}
+												onChange={(e) => setWhatsappId(e.target.value)}
+												label={i18n.t("userModal.form.whatsapp")}
+
+											>
+												<MenuItem value={''}>&nbsp;</MenuItem>
+												{whatsApps.map((whatsapp) => (
+													<MenuItem key={whatsapp.id} value={whatsapp.id}>{whatsapp.name}</MenuItem>
+												))}
+											</Field>
+										</FormControl>
+									)}
+								/>
+								<div>
+									<Field
+										as={TextField}
+										label={i18n.t("userModal.form.greetingMessage")}
+										type="greetingMessage"
+										name="greetingMessage"
+										error={touched.greetingMessage && Boolean(errors.greetingMessage)}
+										helperText={touched.greetingMessage && errors.greetingMessage}
+										variant="outlined"
+										margin="dense"
+										fullWidth
+										multiline
+										rows={4}
+									/>
+								 </div>
+								 <div>
+									<Field
+										as={TextField}
+										label={i18n.t("userModal.form.transferMessage")}
+										name="transferMessage"
+										type="transferMessage"
+										error={touched.greetingMessage && Boolean(errors.greetingMessage)}
+										helperText={touched.greetingMessage && errors.greetingMessage}
+										variant="outlined"
+										margin="dense"
+										fullWidth
+										multiline
+										rows={4}
+									/>
+								 </div>
 							</DialogContent>
 							<DialogActions>
 								<Button

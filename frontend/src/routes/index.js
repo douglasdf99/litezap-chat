@@ -33,7 +33,8 @@ import Annoucements from "../pages/Annoucements";
 import Chat from "../pages/Chat";
 import ToDoList from "../pages/ToDoList/";
 import Subscription from "../pages/Subscription/";
-
+import Files from "../pages/Files/";
+import Prompts from "../pages/Prompts";
 
 const Routes = () => {
   const [showCampaigns, setShowCampaigns] = useState(false);
@@ -90,6 +91,9 @@ const Routes = () => {
                 <Route exact path="/contacts" component={Contacts} isPrivate />
                 <Route exact path="/helps" component={Helps} isPrivate />
                 <Route exact path="/users" component={Users} isPrivate />
+                <Route exact path="/files" component={Files} isPrivate />
+                <Route exact path="/prompts" component={Prompts} isPrivate />
+
                 <Route
                   exact
                   path="/messages-api"
