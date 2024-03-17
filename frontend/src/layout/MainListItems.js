@@ -6,7 +6,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Divider from "@material-ui/core/Divider";
-import { Badge, Collapse, List } from "@material-ui/core";
+import { Badge, Collapse, List, makeStyles } from "@material-ui/core";
 import DashboardOutlinedIcon from "@material-ui/icons/DashboardOutlined";
 import WhatsAppIcon from "@material-ui/icons/WhatsApp";
 import SyncAltIcon from "@material-ui/icons/SyncAlt";
@@ -37,35 +37,60 @@ import { socketConnection } from "../services/socket";
 import { isArray } from "lodash";
 import api from "../services/api";
 import BorderColorIcon from '@material-ui/icons/BorderColor';
-import ToDoList from "../pages/ToDoList/";
 import toastError from "../errors/toastError";
-import { makeStyles } from "@material-ui/core/styles";
-import { AllInclusive, AttachFile, BlurCircular } from '@material-ui/icons';
+import { AttachFile, BlurCircular } from '@material-ui/icons';
 
-const useStyles = makeStyles((theme) => ({
-  ListSubheader: {
-    height: 26,
-    marginTop: "-15px",
-    marginBottom: "-10px",
+const useStyles = makeStyles(() => ({
+  listLink: {
+    color: "black",
+    fontWeight: "normal",
+    marginBottom: ".5rem",
+    transition: "all 0.3s",
+    "&:hover": {
+      paddingLeft: "1.2rem",
+      color: "black",
+    }
   },
+  listLinkActive: {
+    fontWeight: "bold",
+    marginBottom: ".5rem",
+    borderRadius: "20px",
+    transition: "all 0.3s",
+    background: "#0000e5",
+    color: "white",
+    "&:hover": {
+      color: "white",
+      background: "#0000e594",
+    }
+  },
+  activeIcon: {
+    color: "white",
+  }
 }));
-
 
 function ListItemLink(props) {
   const { icon, primary, to, className } = props;
 
+  const active = window.location.pathname === to;
+
+  const classes = useStyles();
+
   const renderLink = React.useMemo(
     () =>
       React.forwardRef((itemProps, ref) => (
-        <RouterLink to={to} ref={ref} {...itemProps} />
+        <RouterLink className={className} to={to} ref={ref} {...itemProps} />
       )),
     [to]
   );
 
   return (
     <li>
-      <ListItem button dense component={renderLink} className={className}>
-        {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
+      <ListItem button dense component={renderLink} className={active ? classes.listLinkActive : classes.listLink}>
+        {icon ? 
+          <ListItemIcon className={active ? classes.activeIcon : null} style={{display: "flex", justifyContent: "center"}}>
+            {icon}
+          </ListItemIcon> 
+        : null}
         <ListItemText primary={primary} />
       </ListItem>
     </li>
@@ -129,10 +154,9 @@ const reducer = (state, action) => {
 };
 
 const MainListItems = (props) => {
-  const classes = useStyles();
   const { drawerClose, collapsed } = props;
   const { whatsApps } = useContext(WhatsAppsContext);
-  const { user ,handleLogout} = useContext(AuthContext);
+  const { user, handleLogout } = useContext(AuthContext);
   const [connectionWarning, setConnectionWarning] = useState(false);
   const [openCampaignSubmenu, setOpenCampaignSubmenu] = useState(false);
   const [showCampaigns, setShowCampaigns] = useState(false);
@@ -142,6 +166,15 @@ const MainListItems = (props) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [searchParam] = useState("");
   const [chats, dispatch] = useReducer(reducer, []);
+
+  const listSubHeaderStyle = {
+    position: "relative",
+    color: "grey",
+    fontSize: "12px",
+    textAlign: "left",
+    paddingLeft: 12,
+    fontWeight: "bold"
+  };
 
   useEffect(() => {
     dispatch({ type: "RESET" });
@@ -237,107 +270,97 @@ const MainListItems = (props) => {
 
   return (
     <div onClick={drawerClose}>
+
+      <Can
+        role={user.profile}
+        perform={"drawer-admin-items:view"}
+        yes={() => (
+          <>
+            <ListSubheader
+              hidden={collapsed}
+              style={listSubHeaderStyle}
+              inset
+              color="inherit">
+              {i18n.t("Gerência")}
+            </ListSubheader>
+            <ListItemLink
+              small
+              to="/"
+              primary="Dashboard"
+              icon={<DashboardOutlinedIcon />}
+            />
+            <Divider style={{margin: "1rem auto 0"}}/>
+          </>
+        )}
+      />
       <Can
         role={user.profile}
         perform={"drawer-service-items:view"}
         style={{
           overflowY: "scroll",
         }}
-        no={()=>(
-        <>
-          <ListSubheader 
-          hidden={collapsed}
-        style={{
-          position:"relative",
-          fontSize: "17px",
-          textAlign: "left",
-          paddingLeft: 20
-        }}   
-        inset
-        color="inherit">
-              {i18n.t("Atendimento")}
-          </ListSubheader>
+        no={() => (
           <>
-            
-            <ListItemLink
-              to="/tickets"
-              primary={i18n.t("mainDrawer.listItems.tickets")}
-              icon={<WhatsAppIcon />}
-            />
-            <ListItemLink
-              to="/quick-messages"
-              primary={i18n.t("mainDrawer.listItems.quickMessages")}
-              icon={<FlashOnIcon />}
+            <ListSubheader
+              hidden={collapsed}
+              style={listSubHeaderStyle}
+              inset
+              color="inherit">
+              {i18n.t("Atendimento")}
+            </ListSubheader>
+            <>
+
+              <ListItemLink
+                to="/tickets"
+                primary={i18n.t("mainDrawer.listItems.tickets")}
+                icon={<WhatsAppIcon />}
               />
               <ListItemLink
-            to="/kanban"
-            primary="Kanban"
-            icon={<LoyaltyRoundedIcon />}
-            />
-            <ListItemLink
-        to="/todolist"
-        primary={i18n.t("Tarefas")}
-        icon={<BorderColorIcon />}
-            />
-            <ListItemLink
-              to="/contacts"
-              primary={i18n.t("mainDrawer.listItems.contacts")}
-              icon={<ContactPhoneOutlinedIcon />}
-            />
-            <ListItemLink
-              to="/schedules"
-              primary={i18n.t("mainDrawer.listItems.schedules")}
-              icon={<EventIcon />}
-            />
-            <ListItemLink
-              to="/tags"
-              primary={i18n.t("mainDrawer.listItems.tags")}
-              icon={<LocalOfferIcon />}
-            />
-            <ListItemLink
-              to="/chats"
-              primary={i18n.t("mainDrawer.listItems.chats")}
-              icon={
-                <Badge color="secondary" variant="dot" invisible={invisible}>
-                  <ForumIcon />
-                </Badge>
-              }
-            />
-            <ListItemLink
-              to="/helps"
-              primary={i18n.t("mainDrawer.listItems.helps")}
-              icon={<HelpOutlineIcon />}
-            />
+                to="/quick-messages"
+                primary={i18n.t("mainDrawer.listItems.quickMessages")}
+                icon={<FlashOnIcon />}
+              />
+              <ListItemLink
+                to="/kanban"
+                primary="Kanban"
+                icon={<LoyaltyRoundedIcon />}
+              />
+              <ListItemLink
+                to="/todolist"
+                primary={i18n.t("Tarefas")}
+                icon={<BorderColorIcon />}
+              />
+              <ListItemLink
+                to="/contacts"
+                primary={i18n.t("mainDrawer.listItems.contacts")}
+                icon={<ContactPhoneOutlinedIcon />}
+              />
+              <ListItemLink
+                to="/schedules"
+                primary={i18n.t("mainDrawer.listItems.schedules")}
+                icon={<EventIcon />}
+              />
+              <ListItemLink
+                to="/tags"
+                primary={i18n.t("mainDrawer.listItems.tags")}
+                icon={<LocalOfferIcon />}
+              />
+              <ListItemLink
+                to="/chats"
+                primary={i18n.t("mainDrawer.listItems.chats")}
+                icon={
+                  <Badge color="secondary" variant="dot" invisible={invisible}>
+                    <ForumIcon />
+                  </Badge>
+                }
+              />
+              <ListItemLink
+                to="/helps"
+                primary={i18n.t("mainDrawer.listItems.helps")}
+                icon={<HelpOutlineIcon />}
+              />
+            </>
           </>
-        </>
-        )}
-      />
-
-      <Can
-        role={user.profile}
-        perform={"drawer-admin-items:view"}
-        yes={()=>(
-          <>
-            <Divider/>
-            <ListSubheader 
-            hidden={collapsed}
-            style={{
-              position:"relative",
-              fontSize: "17px",
-              textAlign: "left",
-              paddingLeft: 20
-            }} 
-            inset
-            color="inherit">
-              {i18n.t("Gerência")}
-            </ListSubheader>
-            <ListItemLink
-            small
-            to="/"
-            primary="Dashboard"
-            icon={<DashboardOutlinedIcon />}
-            />
-        </>
         )}
       />
       <Can
@@ -345,20 +368,15 @@ const MainListItems = (props) => {
         perform="drawer-admin-items:view"
         yes={() => (
           <>
-            <Divider />
-            <ListSubheader 
-            hidden={collapsed}
-            style={{
-              position:"relative",
-              fontSize: "17px",
-              textAlign: "left",
-              paddingLeft: 20
-            }} 
-            inset
-            color="inherit">
+            <Divider style={{margin: "1rem auto 0"}}/>
+            <ListSubheader
+              hidden={collapsed}
+              style={listSubHeaderStyle}
+              inset
+              color="inherit">
               {i18n.t("mainDrawer.listItems.administration")}
             </ListSubheader>
-            
+
             {showCampaigns && (
               <>
                 <ListItem
@@ -433,7 +451,7 @@ const MainListItems = (props) => {
                 </Badge>
               }
             />
-             <ListItemLink
+            <ListItemLink
               to="/files"
               primary={i18n.t("mainDrawer.listItems.files")}
               icon={<AttachFile />}
@@ -453,29 +471,29 @@ const MainListItems = (props) => {
               primary={i18n.t("mainDrawer.listItems.messagesAPI")}
               icon={<CodeRoundedIcon />}
             />
-             <ListItemLink
-                to="/financeiro"
-                primary={i18n.t("mainDrawer.listItems.financeiro")}
-                icon={<LocalAtmIcon />}
-              />
+            <ListItemLink
+              to="/financeiro"
+              primary={i18n.t("mainDrawer.listItems.financeiro")}
+              icon={<LocalAtmIcon />}
+            />
 
             <ListItemLink
               to="/settings"
               primary={i18n.t("mainDrawer.listItems.settings")}
               icon={<SettingsOutlinedIcon />}
             />
-          {}
+            { }
 
           </>
         )}
       />
-      <Divider />
+      <Divider style={{margin: "1rem auto 0"}}/>
       <li>
-        <ListItem 
-        button 
-        dense 
-        onClick={handleClickLogout}> 
-            <ListItemIcon><RotateRight/></ListItemIcon> 
+        <ListItem
+          button
+          dense
+          onClick={handleClickLogout}>
+          <ListItemIcon><RotateRight /></ListItemIcon>
           <ListItemText primary={i18n.t("Sair")} />
         </ListItem>
       </li>
