@@ -48,3 +48,58 @@ Copia e cola:
 
 
 
+Desenvolvimento
+env: 
+
+```
+NODE_ENV=DEVELOPMENT      #it helps on debugging
+BACKEND_URL=http://localhost
+FRONTEND_URL=http://localhost:3000
+PROXY_PORT=8080
+PORT=8080
+
+DB_HOST=localhost
+DB_DIALECT=postgres
+DB_USER=litezapchat
+DB_PASS=litezap123
+DB_NAME=litezapchat
+DB_PORT=5432
+
+JWT_SECRET=VtdMYnCVr4WzwckuDpJzWhlqGrQABJNp7q7DbIPVTTU=
+JWT_REFRESH_SECRET=gkHyHYtyPfxGkIzEUD6664CGdMjhdqW6TWj8PkcKBIM=
+
+REDIS_URI=redis://:litezap123@127.0.0.1:5000
+REDIS_OPT_LIMITER_MAX=1
+REGIS_OPT_LIMITER_DURATION=3000
+
+USER_LIMIT=999
+CONNECTIONS_LIMIT=999
+CLOSED_SEND_BY_ME=true
+
+GERENCIANET_SANDBOX=false
+GERENCIANET_CLIENT_ID=Client_Id_a27c4620f0d3d9c072879dd57068fac1859354a4
+GERENCIANET_CLIENT_SECRET=Client_Secret_7c62c6252b3a5b652d9c0ca92e7d4ba8c3fa6809
+GERENCIANET_PIX_CERT=producao-557388-litezap
+GERENCIANET_PIX_KEY=6f9686cb-4b65-4d50-85ba-72a46202a623
+```
+
+frontend 
+env:
+
+````
+REACT_APP_BACKEND_URL = http://localhost:8080
+REACT_APP_HOURS_CLOSE_TICKETS_AUTO = 24
+````
+
+rodar doker:
+docker compose up -d
+
+
+rodar o backend:
+npm install
+npm run dev:server
+
+rodar o frontend:
+
+npm install
+npm run dev:start

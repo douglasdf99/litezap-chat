@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: litezapchat        # Usuário do banco de dados
+      POSTGRES_PASSWORD: litezap123     # Senha do usuário do banco de dados
+      POSTGRES_DB: litezapchat          # Nome do banco de dados
+    ports:
+      - "5432:5432"                     # Mapeia a porta 5432 do container para a porta 5432 do host
+    volumes:
+      - postgres-data:/var/lib/postgresql/data  # Persiste os dados do banco de dados
+
+  redis:
+    image: redis:alpine
+    restart: always
+    command: redis-server --requirepass litezap123  # Define a senha do Redis
+    ports:
+      - "5000:6379"                    # Mapeia a porta 6379 do container para a porta 5000 do host
+    volumes:
+      - redis-data:/data               # Persiste os dados do Redis
+
+volumes:
+  postgres-data:
+  redis-data:
