@@ -1,11 +1,6 @@
-<h1 align="center">Whaticket Baileys cumunidade |Canal Vem Fazer</h1>
+<h1 align="center">Litezap Chat</h1>
 
-<h1 align="center">https://www.youtube.com/@vemfazer</h1>
-
-
-## Vamos instalar?
-
-FAZENDO DOWNLOAD DO INSTALADOR & INICIANDO A PRIMEIRA INSTALAÇÃO (USAR SOMENTE PARA PRIMEIRA INSTALAÇÃO):
+## Vamos isntalar em produção
 
 ```bash
 sudo apt install -y git && git clone https://github.com/ctichat/instaladorvemfazer install && sudo chmod -R 777 ./install && cd ./install && sudo ./install_primaria
@@ -48,11 +43,17 @@ Copia e cola:
 
 
 
-Desenvolvimento
-env: 
+## Desenvolvimento
 
-```
-NODE_ENV=DEVELOPMENT      #it helps on debugging
+### Instalação: 
+
+````
+cd /backend
+````
+#### Cria o env backend .env
+
+```sh
+NODE_ENV=DEVELOPMENT
 BACKEND_URL=http://localhost
 FRONTEND_URL=http://localhost:3000
 PROXY_PORT=8080
@@ -83,23 +84,43 @@ GERENCIANET_PIX_CERT=producao-557388-litezap
 GERENCIANET_PIX_KEY=6f9686cb-4b65-4d50-85ba-72a46202a623
 ```
 
-frontend 
-env:
+rodar comandos:
+```sh
+npm install
+npm run build
+npx sequelize db:migrate
+npx sequelize db:seed:all
+```
 
-````
+
+#### Cria o env frontend .env
+```sh
+cd ..
+cd /frontend
+
+```
+
+````sh
 REACT_APP_BACKEND_URL = http://localhost:8080
 REACT_APP_HOURS_CLOSE_TICKETS_AUTO = 24
 ````
+#### rodar comandos:
+```sh
+npm install
+```
 
-rodar doker:
+
+### Inicializar modo de desenvolmento:
+
+#### rodar comandos:
+
+```
 docker compose up -d
 
-
-rodar o backend:
-npm install
+cd /backend
 npm run dev:server
 
-rodar o frontend:
-
-npm install
-npm run dev:start
+cd ..
+cd /frontend
+npm run start
+```
