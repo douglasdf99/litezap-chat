@@ -10,6 +10,8 @@ import Invoices from "../models/Invoices";
 import Subscriptions from "../models/Subscriptions";
 import { getIO } from "../libs/socket";
 import UpdateUserService from "../services/UserServices/UpdateUserService";
+import { sendEmail } from "../utils/sendEmail";
+import { InvoicePaidEmail } from "../services/EmailServices/InvoicePaidEmail";
 
 const app = express();
 
@@ -176,6 +178,29 @@ export const webhook = async (
             status: 'paid'
           });
           await company.reload();
+
+          const invoicePaidEmail = new InvoicePaidEmail();
+          const emailHtml = invoicePaidEmail.compileTemplate({
+            name: company.name,
+            value: detahe.valor.original,
+            date: new Date().toLocaleDateString("pt-BR"),
+            invoice_detail: invoices.detail,
+            id_invoice: invoiceID,
+            support_url: 'https://litezap.com/support',
+          });
+          try {
+            await sendEmail({
+              to: company.email,
+              subject: "Sua fatura foi paga",
+              html: emailHtml,
+            });
+            console.log("E-mail de do invoice enviado com sucesso para " + company.email);
+          } catch (error) {
+            console.error("Erro ao enviar e-mail de invoice", error);
+            // Dependendo do seu fluxo de erro, você pode querer tratar essa exceção de forma diferente
+          }
+
+          
           const io = getIO();
           const companyUpdate = await Company.findOne({
             where: {
