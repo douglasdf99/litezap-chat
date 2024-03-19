@@ -3,6 +3,9 @@ import AppError from "../../errors/AppError";
 import Company from "../../models/Company";
 import User from "../../models/User";
 import Setting from "../../models/Setting";
+import { sendEmail } from "../../utils/sendEmail";
+import { WelcomeEmail } from "../../services/EmailServices/WelcomeEmail";
+
 
 interface CompanyData {
   name: string;
@@ -297,6 +300,24 @@ const CreateCompanyService = async (
     if (!created) {
       await setting.update({ value: `${campaignsEnabled}` });
     }
+  }
+
+  const welcomeEmail = new WelcomeEmail();
+  const emailHtml = welcomeEmail.compileTemplate({
+    name: company.name,
+    // Você pode adicionar mais dados ao template conforme necessário
+  });
+
+  try {
+    await sendEmail({
+      to: company.email,
+      subject: "Welcome to Our Service!",
+      html: emailHtml,
+    });
+    console.log("E-mail de boas-vindas enviado com sucesso para " + company.email);
+  } catch (error) {
+    console.error("Erro ao enviar e-mail de boas-vindas", error);
+    // Dependendo do seu fluxo de erro, você pode querer tratar essa exceção de forma diferente
   }
 
   return company;

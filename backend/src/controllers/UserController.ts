@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { getIO } from "../libs/socket";
+import { WelcomeEmail } from '../services/EmailServices/WelcomeEmail';
+import { sendEmail } from '../utils/sendEmail';
+
 
 import CheckSettingsHelper from "../helpers/CheckSettings";
 import AppError from "../errors/AppError";
@@ -80,6 +83,22 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     user
   });
 
+  const welcomeEmail = new WelcomeEmail();
+  const emailHtml = welcomeEmail.compileTemplate({ name: user.name });
+
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: 'Welcome to Our Service!',
+      html: emailHtml,
+    });
+
+    console.log('Email de boas-vindas enviado com sucesso.');
+  } catch (error) {
+    console.error('Falha ao enviar email de boas-vindas:', error);
+    
+  }
+
   return res.status(200).json(user);
 };
 
@@ -149,3 +168,4 @@ export const list = async (req: Request, res: Response): Promise<Response> => {
 
   return res.status(200).json(users);
 };
+
