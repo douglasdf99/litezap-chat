@@ -7,9 +7,11 @@ import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid"; 
 import Box from "@material-ui/core/Box";
+import { Tooltip } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import HelpIcon from "@material-ui/icons/Help";
 
 import { i18n } from "../../translate/i18n";
 
@@ -66,7 +68,14 @@ const useStyles = makeStyles(theme => ({
 	},
 	powered: {
 		color: "white"
-	}
+	},
+  suport: {
+    display: "flex",
+    alignItems: "center",
+    color: "blue",
+    cursor: "pointer",
+    textDecoration: "none",
+  }
 }));
 
 const Login = () => {
@@ -133,7 +142,7 @@ const Login = () => {
 						{i18n.t("login.buttons.submit")}
 					</Button>
 					{ <Grid container>
-						<Grid item>
+						<Grid item style={{marginBottom: '.5rem'}}>
 							<Link
 								href="#"
 								variant="body2"
@@ -143,12 +152,20 @@ const Login = () => {
 								{i18n.t("login.buttons.register")}
 							</Link>
 						</Grid>
+            <Grid item>
+              <a
+                href={process.env.REACT_APP_SUPORT_LINK}
+                target="_blank"
+                className={classes.suport}
+              >
+                <HelpIcon style={{ color: "blue", marginRight: ".5rem" }} />
+                {i18n.t("login.buttons.suport")}
+              </a>
+            </Grid>
 					</Grid> }
 				</form>
-			
 			</div>
-			
-			
+
 		</Container>
 		</div>
 	);

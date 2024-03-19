@@ -26,6 +26,7 @@ const messages = {
         buttons: {
           submit: "Entrar",
           register: "Não tem um conta? Cadastre-se!",
+          suport: "Falar com suporte",
         },
       },
       companies: {

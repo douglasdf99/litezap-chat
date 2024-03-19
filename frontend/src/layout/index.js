@@ -20,6 +20,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import CachedIcon from "@material-ui/icons/Cached";
+import HelpIcon from "@material-ui/icons/Help";
 
 import MainListItems from "./MainListItems";
 import NotificationsPopOver from "../components/NotificationsPopOver";
@@ -32,7 +33,7 @@ import { i18n } from "../translate/i18n";
 import toastError from "../errors/toastError";
 import AnnouncementsPopover from "../components/AnnouncementsPopover";
 
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.svg";
 import { socketConnection } from "../services/socket";
 import ChatPopover from "../pages/Chat/ChatPopover";
 
@@ -165,6 +166,7 @@ const useStyles = makeStyles((theme) => ({
     width: "80%",
     height: "auto",
     maxWidth: 180,
+    padding: ".5rem",
     [theme.breakpoints.down("sm")]: {
       width: "auto",
       height: "80%",
@@ -374,7 +376,7 @@ const LoggedInLayout = ({ children, themeToggle }) => {
               drawerOpen && classes.menuButtonHidden
             )}
           >
-            <MenuIcon />
+            <MenuIcon style={{color: "white"}} />
           </IconButton>
 
           <Typography
@@ -417,7 +419,12 @@ const LoggedInLayout = ({ children, themeToggle }) => {
 
           <AnnouncementsPopover />
 
-          <ChatPopover />
+          <IconButton
+            onClick={() => window.open(process.env.REACT_APP_SUPORT_LINK, "_blank")}
+            color="inherit"
+          >
+            <HelpIcon style={{ color: "white" }} />
+          </IconButton>
 
           <div>
             <IconButton
