@@ -33,9 +33,7 @@ const useStyles = makeStyles(theme => ({
 		height: "100%",
 		flexDirection: "column",
 		overflow: "hidden",
-		borderTopRightRadius: 0,
-		borderBottomRightRadius: 0,
-		borderRadius:0,
+		borderRadius: "1rem",
 	},
 
 	tabsHeader: {
@@ -244,19 +242,19 @@ const TicketsManagerTabs = () => {
             value={"open"}
             icon={<MoveToInboxIcon />}
             label={i18n.t("tickets.tabs.open.title")}
-            classes={{ root: classes.tab }}
+            className={{ root: classes.tab }}
           />
           <Tab
             value={"closed"}
             icon={<CheckBoxIcon />}
             label={i18n.t("tickets.tabs.closed.title")}
-            classes={{ root: classes.tab }}
+            className={{ root: classes.tab }}
           />
           <Tab
             value={"search"}
             icon={<SearchIcon />}
             label={i18n.t("tickets.tabs.search.title")}
-            classes={{ root: classes.tab }}
+            className={{ root: classes.tab }}
           />
         </Tabs>
       </Paper>
@@ -275,7 +273,7 @@ const TicketsManagerTabs = () => {
         ) : (
           <>
             <Button
-              variant="outlined"
+              variant="contained"
               color="primary"
               onClick={() => setNewTicketModalOpen(true)}
             >

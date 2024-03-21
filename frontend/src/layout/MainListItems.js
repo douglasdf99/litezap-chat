@@ -40,15 +40,15 @@ import BorderColorIcon from '@material-ui/icons/BorderColor';
 import toastError from "../errors/toastError";
 import { AttachFile, BlurCircular } from '@material-ui/icons';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   listLink: {
-    color: "black",
+    color: theme.mode === 'light' ? "black" : "white",
     fontWeight: "normal",
     marginBottom: ".5rem",
     transition: "all 0.3s",
     "&:hover": {
       paddingLeft: "1.2rem",
-      color: "black",
+      color: theme.mode === 'light' ? "black" : "white",
     }
   },
   listLinkActive: {

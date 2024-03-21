@@ -10,72 +10,74 @@ import logo from "../../assets/logo.png"; //PLW DESIGN LOGO//
 import { i18n } from "../../translate/i18n";
 
 const useStyles = makeStyles(theme => ({
-	chatContainer: {
-		flex: 1,
-		// backgroundColor: "#eee",
-		padding: theme.spacing(1), //Aqui ele ajusta espaço na tela de ticket
-		height: `calc(100% - 48px)`,
-		overflowY: "hidden",
-	},
+  chatContainer: {
+    flex: 1,
+    // backgroundColor: "#eee",
+    padding: theme.spacing(4), //Aqui ele ajusta espaço na tela de ticket
+    height: `calc(100% - 48px)`,
+    overflowY: "hidden",
+    borderRadius: "1.5rem",
+  },
 
-	chatPapper: {
-		// backgroundColor: "red",
-		display: "flex",
-		height: "100%",
-	},
+  chatPapper: {
+    // backgroundColor: "red",
+    display: "flex",
+    height: "100%",
+  },
 
-	contactsWrapper: {
-		display: "flex",
-		height: "100%",
-		flexDirection: "column",
-		overflowY: "hidden",
-	},
-	messagesWrapper: {
-		display: "flex",
-		height: "100%",
-		flexDirection: "column",
-	},
-	welcomeMsg: {
-		backgroundColor: theme.palette.boxticket, //DARK MODE PLW DESIGN//
-		display: "flex",
-		justifyContent: "space-evenly",
-		alignItems: "center",
-		height: "100%",
-		textAlign: "center",
-	},
+  contactsWrapper: {
+    display: "flex",
+    height: "100%",
+    flexDirection: "column",
+    overflowY: "hidden",
+  },
+  messagesWrapper: {
+    display: "flex",
+    height: "100%",
+    flexDirection: "column",
+  },
+  welcomeMsg: {
+    backgroundColor: theme.palette.boxticket, //DARK MODE PLW DESIGN//
+    display: "flex",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    height: "100%",
+    textAlign: "center",
+    borderRadius: "1rem",
+  },
 }));
 
 const TicketsCustom = () => {
-	const classes = useStyles();
-	const { ticketId } = useParams();
+  const classes = useStyles();
+  const { ticketId } = useParams();
 
-	return (
-		<div className={classes.chatContainer}>
-			<div className={classes.chatPapper}>
-				<Grid container spacing={0}>
-					<Grid item xs={4} className={classes.contactsWrapper}>
-						<TicketsManager />
-					</Grid>
-					<Grid item xs={8} className={classes.messagesWrapper}>
-						{ticketId ? (
-							<>
-								<Ticket />
-							</>
-						) : (
-							<Paper square variant="outlined" className={classes.welcomeMsg}>
-							{/* PLW DESIGN LOGO */}
-							<div>
-							<center><img style={{ margin: "0 auto", width: "70%" }} src={logo} alt="logologin" /></center>
-							</div>
-							{/* PLW DESIGN LOGO */}
-							{/*<span>{i18n.t("chat.noTicketMessage")}</span>*/}
-							</Paper>
-						)}
-					</Grid>
-				</Grid>
-			</div>
-		</div>
-	);
+  return (
+    <div className={classes.chatContainer}>
+      <div className={classes.chatPapper}>
+        <Grid container spacing={1}>
+          <Grid item xs={4} className={classes.contactsWrapper}>
+            <TicketsManager />
+          </Grid>
+          <Grid item xs={8} className={classes.messagesWrapper}>
+            {ticketId ? (
+              <>
+                <Ticket />
+              </>
+            ) : (
+              <Paper square variant="outlined" className={classes.welcomeMsg}>
+                {/* PLW DESIGN LOGO */}
+                <div>
+                  <center><img style={{ margin: "0 auto", width: "70%" }} src={logo} alt="logologin" /></center>
+                </div>
+                {/* PLW DESIGN LOGO */}
+                {/*<span>{i18n.t("chat.noTicketMessage")}</span>*/}
+              </Paper>
+            )}
+          </Grid>
+        </Grid>
+      </div>
+    </div>
+  );
 };
 
 export default TicketsCustom;
