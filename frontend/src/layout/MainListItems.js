@@ -69,7 +69,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 function ListItemLink(props) {
-  const { icon, primary, to, className } = props;
+  const { icon, primary, to, className, collapsed } = props;
 
   const active = window.location.pathname === to;
 
@@ -87,7 +87,7 @@ function ListItemLink(props) {
     <li>
       <ListItem button dense component={renderLink} className={active ? classes.listLinkActive : classes.listLink}>
         {icon ? 
-          <ListItemIcon className={active ? classes.activeIcon : null} style={{display: "flex", justifyContent: "center"}}>
+          <ListItemIcon className={active ? classes.activeIcon : null} style={{display: "flex", justifyContent: collapsed ? "start" : "center"}}>
             {icon}
           </ListItemIcon> 
         : null}
@@ -284,12 +284,12 @@ const MainListItems = (props) => {
               {i18n.t("Gerência")}
             </ListSubheader>
             <ListItemLink
+              collapsed={collapsed}
               small
               to="/"
               primary="Dashboard"
               icon={<DashboardOutlinedIcon />}
             />
-            <Divider style={{margin: "1rem auto 0"}}/>
           </>
         )}
       />
@@ -301,6 +301,7 @@ const MainListItems = (props) => {
         }}
         no={() => (
           <>
+            <Divider style={{margin: "1rem auto"}}/>
             <ListSubheader
               hidden={collapsed}
               style={listSubHeaderStyle}
@@ -311,41 +312,44 @@ const MainListItems = (props) => {
             <>
 
               <ListItemLink
+                collapsed={collapsed}
                 to="/tickets"
                 primary={i18n.t("mainDrawer.listItems.tickets")}
                 icon={<WhatsAppIcon />}
               />
               <ListItemLink
+                collapsed={collapsed}
                 to="/quick-messages"
                 primary={i18n.t("mainDrawer.listItems.quickMessages")}
                 icon={<FlashOnIcon />}
               />
               <ListItemLink
+                collapsed={collapsed}
                 to="/kanban"
                 primary="Kanban"
                 icon={<LoyaltyRoundedIcon />}
               />
-              <ListItemLink
+              <ListItemLink collapsed={collapsed}
                 to="/todolist"
                 primary={i18n.t("Tarefas")}
                 icon={<BorderColorIcon />}
               />
-              <ListItemLink
+              <ListItemLink collapsed={collapsed}
                 to="/contacts"
                 primary={i18n.t("mainDrawer.listItems.contacts")}
                 icon={<ContactPhoneOutlinedIcon />}
               />
-              <ListItemLink
+              <ListItemLink collapsed={collapsed}
                 to="/schedules"
                 primary={i18n.t("mainDrawer.listItems.schedules")}
                 icon={<EventIcon />}
               />
-              <ListItemLink
+              <ListItemLink collapsed={collapsed}
                 to="/tags"
                 primary={i18n.t("mainDrawer.listItems.tags")}
                 icon={<LocalOfferIcon />}
               />
-              <ListItemLink
+              <ListItemLink collapsed={collapsed}
                 to="/chats"
                 primary={i18n.t("mainDrawer.listItems.chats")}
                 icon={
@@ -354,7 +358,7 @@ const MainListItems = (props) => {
                   </Badge>
                 }
               />
-              <ListItemLink
+              <ListItemLink collapsed={collapsed}
                 to="/helps"
                 primary={i18n.t("mainDrawer.listItems.helps")}
                 icon={<HelpOutlineIcon />}
@@ -383,8 +387,8 @@ const MainListItems = (props) => {
                   button
                   onClick={() => setOpenCampaignSubmenu((prev) => !prev)}
                 >
-                  <ListItemIcon>
-                    <EventAvailableIcon />
+                  <ListItemIcon style={{display: "flex", justifyContent: collapsed ? "start" : "center"}}>
+                    <EventAvailableIcon/>
                   </ListItemIcon>
                   <ListItemText
                     primary={i18n.t("mainDrawer.listItems.campaigns")}
@@ -431,18 +435,19 @@ const MainListItems = (props) => {
               </>
             )}
             {user.super && (
-              <ListItemLink
+              <ListItemLink collapsed={collapsed}
                 to="/announcements"
                 primary={i18n.t("mainDrawer.listItems.annoucements")}
                 icon={<AnnouncementIcon />}
               />
             )}
             <ListItemLink
+              collapsed={collapsed}
               to="/prompts"
               primary={i18n.t("mainDrawer.listItems.prompts")}
               icon={<BlurCircular />}
             />
-            <ListItemLink
+            <ListItemLink collapsed={collapsed}
               to="/connections"
               primary={i18n.t("mainDrawer.listItems.connections")}
               icon={
@@ -451,38 +456,37 @@ const MainListItems = (props) => {
                 </Badge>
               }
             />
-            <ListItemLink
+            <ListItemLink collapsed={collapsed}
               to="/files"
               primary={i18n.t("mainDrawer.listItems.files")}
               icon={<AttachFile />}
             />
-            <ListItemLink
+            <ListItemLink collapsed={collapsed}
               to="/queues"
               primary={i18n.t("mainDrawer.listItems.queues")}
               icon={<AccountTreeOutlinedIcon />}
             />
-            <ListItemLink
+            <ListItemLink collapsed={collapsed}
               to="/users"
               primary={i18n.t("mainDrawer.listItems.users")}
               icon={<PeopleAltOutlinedIcon />}
             />
-            <ListItemLink
+            <ListItemLink collapsed={collapsed}
               to="/messages-api"
               primary={i18n.t("mainDrawer.listItems.messagesAPI")}
               icon={<CodeRoundedIcon />}
             />
-            <ListItemLink
+            <ListItemLink collapsed={collapsed}
               to="/financeiro"
               primary={i18n.t("mainDrawer.listItems.financeiro")}
               icon={<LocalAtmIcon />}
             />
 
             <ListItemLink
-              to="/settings"
+              to="/settings" collapsed={collapsed}
               primary={i18n.t("mainDrawer.listItems.settings")}
               icon={<SettingsOutlinedIcon />}
             />
-            { }
 
           </>
         )}
