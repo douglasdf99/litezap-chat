@@ -7,7 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import TicketsManager from "../../components/TicketsManager/";
 import Ticket from "../../components/Ticket/";
 
-import logo from "../../assets/logo.png"; //PLW DESIGN LOGO//
+import empty_state_v2 from "../../assets/empty_state_v2.svg"; //PLW DESIGN LOGO//
 
 import { i18n } from "../../translate/i18n";
 
@@ -66,7 +66,7 @@ const Chat = () => {
 						) : (
 							<Paper square variant="outlined" className={classes.welcomeMsg}>
 							<div>
-							<center><img style={{ margin: "0 auto", width: "70%" }} src={logo} alt="logologin" /></center>
+							<center><img style={{ margin: "0 auto", width: "70%" }} src={empty_state_v2} alt="empty_state_v2" /></center>
 							</div>
 							{/*<span>{i18n.t("chat.noTicketMessage")}</span>*/}
 							</Paper>

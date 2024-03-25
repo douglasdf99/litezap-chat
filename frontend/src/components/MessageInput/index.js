@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
 	},
 
 	newMessageBox: {
-		background: "#eee",
+		background: "#C9DBFE",
 		width: "100%",
 		display: "flex",
 		padding: "7px",
@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
 	messageInputWrapper: {
 		padding: 6,
 		marginRight: 7,
-		background: "#fff",
+		background: "#C9DBFE",
 		display: "flex",
 		borderRadius: 20,
 		flex: 1,

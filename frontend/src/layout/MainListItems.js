@@ -56,11 +56,11 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: ".5rem",
     borderRadius: "20px",
     transition: "all 0.3s",
-    background: "#0000e5",
+    background: "#377AFB",
     color: "white",
     "&:hover": {
       color: "white",
-      background: "#0000e594",
+      background: "#2847E9",
     }
   },
   activeIcon: {
@@ -80,7 +80,7 @@ function ListItemLink(props) {
       React.forwardRef((itemProps, ref) => (
         <RouterLink className={className} to={to} ref={ref} {...itemProps} />
       )),
-    [to]
+    [className, to]
   );
 
   return (

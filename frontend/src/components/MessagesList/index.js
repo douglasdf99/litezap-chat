@@ -46,7 +46,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   messagesList: {
-    backgroundImage: theme.mode === 'light' ? `url(${whatsBackground})` : `url(${whatsBackgroundDark})`, //DARK MODE PLW DESIGN//
+    // backgroundImage: theme.mode === 'light' ? `url(${whatsBackground})` : `url(${whatsBackgroundDark})`, //DARK MODE PLW DESIGN//
+    backgroundColor: theme.mode === 'light' ? `#E7EDFA` : `#545454`, //DARK MODE PLW DESIGN//
     display: "flex",
     flexDirection: "column",
     flexGrow: 1,

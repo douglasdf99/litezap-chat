@@ -6,14 +6,14 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import TicketsManager from "../../components/TicketsManagerTabs/";
 import Ticket from "../../components/Ticket/";
-import logo from "../../assets/logo.png"; //PLW DESIGN LOGO//
+import empty_state_v2 from "../../assets/empty_state_v2.svg"; //PLW DESIGN LOGO//
 import { i18n } from "../../translate/i18n";
 
 const useStyles = makeStyles(theme => ({
   chatContainer: {
     flex: 1,
     // backgroundColor: "#eee",
-    padding: theme.spacing(4), //Aqui ele ajusta espaço na tela de ticket
+    // padding: theme.spacing(4), //Aqui ele ajusta espaço na tela de ticket
     height: `calc(100% - 48px)`,
     overflowY: "hidden",
     borderRadius: "1.5rem",
@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     height: "100%",
     flexDirection: "column",
+    padding: 0
   },
   welcomeMsg: {
     backgroundColor: theme.palette.boxticket, //DARK MODE PLW DESIGN//
@@ -54,7 +55,7 @@ const TicketsCustom = () => {
   return (
     <div className={classes.chatContainer}>
       <div className={classes.chatPapper}>
-        <Grid container spacing={1}>
+        <Grid container>
           <Grid item xs={4} className={classes.contactsWrapper}>
             <TicketsManager />
           </Grid>
@@ -67,7 +68,7 @@ const TicketsCustom = () => {
               <Paper square variant="outlined" className={classes.welcomeMsg}>
                 {/* PLW DESIGN LOGO */}
                 <div>
-                  <center><img style={{ margin: "0 auto", width: "70%" }} src={logo} alt="logologin" /></center>
+                  <center><img style={{ margin: "0 auto", width: "70%" }} src={empty_state_v2} alt="empty_state_v2" /></center>
                 </div>
                 {/* PLW DESIGN LOGO */}
                 {/*<span>{i18n.t("chat.noTicketMessage")}</span>*/}
