@@ -120,7 +120,7 @@ const useAuth = () => {
       var before = moment(moment().format()).isBefore(dueDate);
       var dias = moment.duration(diff).asDays();
 
-      if (before === true) {
+      // if (before === true) {
         localStorage.setItem("token", JSON.stringify(data.token));
         localStorage.setItem("companyId", companyId);
         localStorage.setItem("userId", id);
@@ -134,11 +134,11 @@ const useAuth = () => {
         }
         history.push("/tickets");
         setLoading(false);
-      } else {
-        toastError(`Opss! Sua assinatura venceu ${vencimento}.
-Entre em contato com o Suporte para mais informações! `);
-        setLoading(false);
-      }
+//       } else {
+//         toastError(`Opss! Sua assinatura venceu ${vencimento}.
+// Entre em contato com o Suporte para mais informações! `);
+//         setLoading(false);
+//       }
 
       //quebra linha 
     } catch (err) {

@@ -14,7 +14,7 @@ interface TokenPayload {
   exp: number;
 }
 
-const isAuth = (req: Request, res: Response, next: NextFunction): void => {
+const planExpired = (req: Request, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -25,17 +25,16 @@ const isAuth = (req: Request, res: Response, next: NextFunction): void => {
 
   try {
     const decoded = verify(token, authConfig.secret);
-    const { id, profile, companyId } = decoded as TokenPayload;
-    req.user = {
-      id,
-      profile,
-      companyId,
-    };
+    const { dueDate } = decoded as TokenPayload;
+    console.log(dueDate, new Date(dueDate));
+    if (new Date(dueDate) < new Date()) {
+      throw new AppError("PLAN_EXPLIRED", 401);
+    }
   } catch (err) {
-    throw new AppError("Invalid token. We'll try to assign a new one on next request", 403 );
+    throw new AppError("PLAN_EXPLIRED", 403 );
   }
 
   return next();
 };
 
-export default isAuth;
+export default planExpired;

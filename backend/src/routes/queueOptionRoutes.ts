@@ -1,18 +1,19 @@
 import { Router } from "express";
 import isAuth from "../middleware/isAuth";
+import planExpired from "../middleware/planExpired";
 
 import * as QueueOptionController from "../controllers/QueueOptionController";
 
 const queueOptionRoutes = Router();
 
-queueOptionRoutes.get("/queue-options", isAuth, QueueOptionController.index);
+queueOptionRoutes.get("/queue-options", isAuth, planExpired, QueueOptionController.index);
 
-queueOptionRoutes.post("/queue-options", isAuth, QueueOptionController.store);
+queueOptionRoutes.post("/queue-options", isAuth, planExpired, QueueOptionController.store);
 
-queueOptionRoutes.get("/queue-options/:queueOptionId", isAuth, QueueOptionController.show);
+queueOptionRoutes.get("/queue-options/:queueOptionId", isAuth, planExpired, QueueOptionController.show);
 
-queueOptionRoutes.put("/queue-options/:queueOptionId", isAuth, QueueOptionController.update);
+queueOptionRoutes.put("/queue-options/:queueOptionId", isAuth, planExpired, QueueOptionController.update);
 
-queueOptionRoutes.delete("/queue-options/:queueOptionId", isAuth, QueueOptionController.remove);
+queueOptionRoutes.delete("/queue-options/:queueOptionId", isAuth, planExpired, QueueOptionController.remove);
 
 export default queueOptionRoutes;
