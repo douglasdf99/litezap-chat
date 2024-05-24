@@ -10,7 +10,8 @@ export const createAccessToken = (user: User): string => {
       usarname: user.name,
       profile: user.profile,
       id: user.id,
-      companyId: user.companyId
+      companyId: user.companyId,
+      dueDate: user.company.dueDate
     },
     secret,
     {
@@ -23,7 +24,7 @@ export const createRefreshToken = (user: User): string => {
   const { refreshSecret, refreshExpiresIn } = authConfig;
 
   return sign(
-    { id: user.id, tokenVersion: user.tokenVersion, companyId: user.companyId },
+    { id: user.id, tokenVersion: user.tokenVersion, companyId: user.companyId, dueDate: user.company.dueDate },
     refreshSecret,
     {
       expiresIn: refreshExpiresIn

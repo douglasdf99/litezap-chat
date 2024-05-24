@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import clsx from "clsx";
-import moment from "moment";
+import { useLocation } from "react-router-dom";
 import {
   makeStyles,
   Drawer,
@@ -42,6 +42,7 @@ import { useDate } from "../hooks/useDate";
 import ColorModeContext from "../layout/themeContext";
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import Brightness7Icon from '@material-ui/icons/Brightness7';
+import PlanExpirationNotice from "../components/PlanExpirationNotice";
 
 const drawerWidth = 240;
 
@@ -175,16 +176,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LoggedInLayout = ({ children, themeToggle }) => {
+const LoggedInLayout = ({ children }) => {
   const classes = useStyles();
+  const location = useLocation();
   const [userModalOpen, setUserModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { handleLogout, loading } = useContext(AuthContext);
+  const { handleLogout, loading, user } = useContext(AuthContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerVariant, setDrawerVariant] = useState("permanent");
-  // const [dueDate, setDueDate] = useState("");
-  const { user } = useContext(AuthContext);
 
   const theme = useTheme();
   const { colorMode } = useContext(ColorModeContext);
@@ -193,54 +193,6 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   const [volume, setVolume] = useState(localStorage.getItem("volume") || 1);
 
   const { dateToClient } = useDate();
-
-
-  //################### CODIGOS DE TESTE #########################################
-  // useEffect(() => {
-  //   navigator.getBattery().then((battery) => {
-  //     console.log(`Battery Charging: ${battery.charging}`);
-  //     console.log(`Battery Level: ${battery.level * 100}%`);
-  //     console.log(`Charging Time: ${battery.chargingTime}`);
-  //     console.log(`Discharging Time: ${battery.dischargingTime}`);
-  //   })
-  // }, []);
-
-  // useEffect(() => {
-  //   const geoLocation = navigator.geolocation
-
-  //   geoLocation.getCurrentPosition((position) => {
-  //     let lat = position.coords.latitude;
-  //     let long = position.coords.longitude;
-
-  //     console.log('latitude: ', lat)
-  //     console.log('longitude: ', long)
-  //   })
-  // }, []);
-
-  // useEffect(() => {
-  //   const nucleos = window.navigator.hardwareConcurrency;
-
-  //   console.log('Nucleos: ', nucleos)
-  // }, []);
-
-  // useEffect(() => {
-  //   console.log('userAgent', navigator.userAgent)
-  //   if (
-  //     navigator.userAgent.match(/Android/i)
-  //     || navigator.userAgent.match(/webOS/i)
-  //     || navigator.userAgent.match(/iPhone/i)
-  //     || navigator.userAgent.match(/iPad/i)
-  //     || navigator.userAgent.match(/iPod/i)
-  //     || navigator.userAgent.match(/BlackBerry/i)
-  //     || navigator.userAgent.match(/Windows Phone/i)
-  //   ) {
-  //     console.log('é mobile ', true) //celular
-  //   }
-  //   else {
-  //     console.log('não é mobile: ', false) //nao é celular
-  //   }
-  // }, []);
-  //##############################################################################
 
   useEffect(() => {
     if (document.body.offsetWidth > 600) {
@@ -281,7 +233,6 @@ const LoggedInLayout = ({ children, themeToggle }) => {
       socket.disconnect();
       clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleMenu = (event) => {
@@ -328,6 +279,13 @@ const LoggedInLayout = ({ children, themeToggle }) => {
   if (loading) {
     return <BackdropLoading />;
   }
+
+  const isPlanExpired = (dueDate) => {
+    return new Date(dueDate) < new Date();
+  };
+
+  const allowedRoutes = ["/connections", "/users", "/financeiro"];
+  const isAllowedRoute = allowedRoutes.includes(location.pathname);
 
   return (
     <div className={classes.root}>
@@ -385,7 +343,6 @@ const LoggedInLayout = ({ children, themeToggle }) => {
             noWrap
             className={classes.title}
           >
-            {/* {greaterThenSm && user?.profile === "admin" && getDateAndDifDays(user?.company?.dueDate).difData < 7 ? ( */}
             {greaterThenSm && user?.profile === "admin" && user?.company?.dueDate ? (
               <>
                 Olá <b>{user.name}</b>, Bem vindo a <b>{user?.company?.name}</b>! (Ativo até {dateToClient(user?.company?.dueDate)})
@@ -454,15 +411,17 @@ const LoggedInLayout = ({ children, themeToggle }) => {
               <MenuItem onClick={handleOpenUserModal}>
                 {i18n.t("mainDrawer.appBar.user.profile")}
               </MenuItem>
-
             </Menu>
           </div>
         </Toolbar>
       </AppBar>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-
-        {children ? children : null}
+        {isPlanExpired(user?.company?.dueDate) && !isAllowedRoute ? (
+          <PlanExpirationNotice />
+        ) : (
+          children? children : null
+        )}
       </main>
     </div>
   );
