@@ -10,7 +10,7 @@ const authRoutes = Router();
 authRoutes.post("/signup", envTokenAuth, UserController.store);
 authRoutes.post("/login", SessionController.store);
 authRoutes.post("/refresh_token", SessionController.update);
-authRoutes.delete("/logout", isAuth, planExpired, SessionController.remove);
+authRoutes.delete("/logout", isAuth, SessionController.remove);
 authRoutes.get("/me", isAuth, planExpired, SessionController.me);
 
 export default authRoutes;

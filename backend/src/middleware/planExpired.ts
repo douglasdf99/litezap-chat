@@ -31,7 +31,7 @@ const planExpired = (req: Request, res: Response, next: NextFunction): void => {
       throw new AppError("PLAN_EXPLIRED", 401);
     }
   } catch (err) {
-    throw new AppError("PLAN_EXPLIRED", 403 );
+    throw new AppError("Seu plano está expirado", 403 );
   }
 
   return next();

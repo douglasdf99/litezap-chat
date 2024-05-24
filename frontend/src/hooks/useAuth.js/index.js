@@ -129,7 +129,7 @@ const useAuth = () => {
         setUser(data.user);
         setIsAuth(true);
         toast.success(i18n.t("auth.toasts.success"));
-        if (Math.round(dias) < 5) {
+        if (Math.round(dias) < 5 && Math.round(dias) > 0){
           toast.warn(`Sua assinatura vence em ${Math.round(dias)} ${Math.round(dias) === 1 ? 'dia' : 'dias'} `);
         }
         history.push("/tickets");
