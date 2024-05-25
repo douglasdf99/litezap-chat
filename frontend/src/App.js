@@ -17,7 +17,9 @@ const App = () => {
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const preferredTheme = window.localStorage.getItem("preferredTheme");
-  const [mode, setMode] = useState(preferredTheme ? preferredTheme : prefersDarkMode ? "dark" : "light");
+  const [mode, setMode] = useState(
+    preferredTheme ? preferredTheme : prefersDarkMode ? "dark" : "light"
+  );
 
   const colorMode = React.useMemo(
     () => ({
@@ -32,11 +34,11 @@ const App = () => {
     {
       scrollbarStyles: {
         "&::-webkit-scrollbar": {
-          width: '5px',
-          height: '8px',
+          width: "5px",
+          height: "8px",
         },
         "&::-webkit-scrollbar-thumb": {
-          boxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.3)',
+          boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)",
           backgroundColor: "#377AFB",
           borderRadius: "10px",
         },
@@ -51,7 +53,7 @@ const App = () => {
       },
       palette: {
         type: mode,
-        primary: { main: "#377AFB" },
+        primary: { main: "#377AFB", contrast: "#FBB837" },
         textPrimary: mode === "light" ? "#377AFB" : "#FFFFFF",
         borderPrimary: mode === "light" ? "#377AFB" : "#FFFFFF",
         dark: { main: mode === "light" ? "#333333" : "#F3F3F3" },
@@ -74,7 +76,15 @@ const App = () => {
         total: mode === "light" ? "#fff" : "#222",
         messageIcons: mode === "light" ? "grey" : "#F3F3F3",
         inputBackground: mode === "light" ? "#FFFFFF" : "#333",
-        barraSuperior: mode === "light" ? "linear-gradient(to right, #377AFB, #0000FF, #00008B)" : "#666",
+        primaryGradientHorizontal:
+          mode === "light"
+            ? "linear-gradient(to right, #377AFB, #0000FF, #00008B)"
+            : "#666",
+        primaryGradientVertical:
+          mode === "light"
+            ? "linear-gradient(to bottom, #377AFB, #0000FF, #00008B)"
+            : "#666",
+        primarySwitch: mode === "light" ? "#377AFB" : "#666",
         boxticket: mode === "light" ? "#EEE" : "#333",
         campaigntab: mode === "light" ? "#ededed" : "#333",
       },
@@ -96,8 +106,6 @@ const App = () => {
   useEffect(() => {
     window.localStorage.setItem("preferredTheme", mode);
   }, [mode]);
-
-
 
   return (
     <ColorModeContext.Provider value={{ colorMode }}>
