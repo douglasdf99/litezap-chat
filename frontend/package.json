@@ -35,6 +35,7 @@
     "react-csv": "^2.2.2",
     "react-currency-format": "^1.1.0",
     "react-dom": "^16.13.1",
+    "react-gtm-module": "^2.0.11",
     "react-icons": "^4.4.0",
     "react-input-mask": "^2.0.4",
     "react-modal-image": "^2.5.0",
@@ -44,8 +45,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-text-mask": "^5.5.0",
-	"react-trello": "^2.2.11",
     "react-toastify": "9.0.0",
+    "react-trello": "^2.2.11",
     "recharts": "^2.0.2",
     "socket.io-client": "^3.0.5",
     "styled-components": "^5.3.5",
@@ -56,7 +57,7 @@
     "yup": "^0.32.8"
   },
   "scripts": {
-  "start": "react-scripts start",
+    "start": "react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "builddev": "react-scripts build",
     "test": "react-scripts test",

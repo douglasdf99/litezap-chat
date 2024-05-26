@@ -1,8 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import TagManager from 'react-gtm-module';
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import App from "./App";
+
+const tagManagerArgs = {
+    gtmId: 'GTM-NZCXMXSV'
+};
+
+TagManager.initialize(tagManagerArgs);
+
 
 ReactDOM.render(
 	<CssBaseline>
@@ -10,13 +18,3 @@ ReactDOM.render(
 	</CssBaseline>,
 	document.getElementById("root")
 );
-
-// ReactDOM.render(
-// 	<React.StrictMode>
-// 		<CssBaseline>
-// 			<App />
-// 		</CssBaseline>,
-//   </React.StrictMode>
-
-// 	document.getElementById("root")
-// );
