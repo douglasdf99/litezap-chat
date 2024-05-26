@@ -35,6 +35,7 @@ import ToDoList from "../pages/ToDoList/";
 import Subscription from "../pages/Subscription/";
 import Files from "../pages/Files/";
 import Prompts from "../pages/Prompts";
+// import ChatFlow from "../pages/ChatFlow";
 
 const Routes = () => {
   const [showCampaigns, setShowCampaigns] = useState(false);
@@ -75,12 +76,7 @@ const Routes = () => {
                   component={QuickMessages}
                   isPrivate
                 />
-                <Route
-                  exact
-                  path="/todolist"
-                  component={ToDoList}
-                  isPrivate
-                  />
+                <Route exact path="/todolist" component={ToDoList} isPrivate />
                 <Route
                   exact
                   path="/schedules"
@@ -106,12 +102,8 @@ const Routes = () => {
                   component={SettingsCustom}
                   isPrivate
                 />
-				        <Route 
-                  exact
-                  path="/kanban"
-                  component={Kanban}
-                  isPrivate
-                />
+                <Route exact path="/kanban" component={Kanban} isPrivate />
+                {/* <Route exact path="/chat-flow" component={ChatFlow} isPrivate /> */}
                 <Route
                   exact
                   path="/financeiro"

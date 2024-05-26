@@ -1,15 +1,37 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
+import ColorModeContext from "./themeContext";
+import NotificationsPopOver from "../components/NotificationsPopOver";
+import NotificationsVolume from "../components/NotificationsVolume";
+import AnnouncementsPopover from "../components/AnnouncementsPopover";
+import UserModal from "../components/UserModal";
+
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Divider from "@material-ui/core/Divider";
-import { Badge, Collapse, List, makeStyles } from "@material-ui/core";
+import {
+  Badge,
+  Collapse,
+  List,
+  makeStyles,
+  Box,
+  Chip,
+  Avatar,
+  ListItemAvatar,
+  IconButton,
+  ListItemSecondaryAction,
+  Menu,
+  MenuItem,
+  withStyles,
+  useTheme,
+} from "@material-ui/core";
 import DashboardOutlinedIcon from "@material-ui/icons/DashboardOutlined";
 import WhatsAppIcon from "@material-ui/icons/WhatsApp";
 import SyncAltIcon from "@material-ui/icons/SyncAlt";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined";
 import ContactPhoneOutlinedIcon from "@material-ui/icons/ContactPhoneOutlined";
@@ -25,31 +47,38 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import PeopleIcon from "@material-ui/icons/People";
 import ListIcon from "@material-ui/icons/ListAlt";
 import AnnouncementIcon from "@material-ui/icons/Announcement";
+import LockIcon from "@material-ui/icons/Lock";
 import ForumIcon from "@material-ui/icons/Forum";
-import LocalAtmIcon from '@material-ui/icons/LocalAtm';
+import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 import RotateRight from "@material-ui/icons/RotateRight";
 import { i18n } from "../translate/i18n";
 import { WhatsAppsContext } from "../context/WhatsApp/WhatsAppsContext";
 import { AuthContext } from "../context/Auth/AuthContext";
-import LoyaltyRoundedIcon from '@material-ui/icons/LoyaltyRounded';
+import LoyaltyRoundedIcon from "@material-ui/icons/LoyaltyRounded";
+import AccountTreeIcon from "@material-ui/icons/AccountTree";
 import { Can } from "../components/Can";
 import { socketConnection } from "../services/socket";
 import { isArray } from "lodash";
 import api from "../services/api";
-import BorderColorIcon from '@material-ui/icons/BorderColor';
+import BorderColorIcon from "@material-ui/icons/BorderColor";
 import toastError from "../errors/toastError";
-import { AttachFile, BlurCircular } from '@material-ui/icons';
+import { AttachFile, BlurCircular } from "@material-ui/icons";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import HelpIcon from "@material-ui/icons/Help";
+import Brightness4Icon from "@material-ui/icons/Brightness4";
+import Brightness7Icon from "@material-ui/icons/Brightness7";
+import CachedIcon from "@material-ui/icons/Cached";
 
 const useStyles = makeStyles((theme) => ({
   listLink: {
-    color: theme.mode === 'light' ? "black" : "white",
     fontWeight: "normal",
     marginBottom: ".5rem",
     transition: "all 0.3s",
     "&:hover": {
       paddingLeft: "1.2rem",
-      color: theme.mode === 'light' ? "black" : "white",
-    }
+      color: "#FFF",
+    },
   },
   listLinkActive: {
     fontWeight: "bold",
@@ -57,19 +86,40 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "20px",
     transition: "all 0.3s",
     background: "#377AFB",
-    color: "white",
+    color: "#FFF",
     "&:hover": {
       color: "white",
       background: "#2847E9",
-    }
+      fontWeight: 600,
+    },
   },
-  activeIcon: {
+  icon: {
     color: "white",
-  }
+  },
+  iconActive: {
+    color: "#FFF",
+  },
+  floatingItem: {
+    margin: 0,
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+  },
+  avatarSize: {
+    width: theme.spacing(5),
+    height: theme.spacing(5),
+  },
 }));
 
+const StyledMenuItem = withStyles((theme) => ({
+  root: {
+    "& .MuiListItemIcon-root": {
+      minWidth: theme.spacing(5),
+    },
+  },
+}))(MenuItem);
+
 function ListItemLink(props) {
-  const { icon, primary, to, className, collapsed } = props;
+  const { icon, primary, to, className, collapsed, disabled } = props;
 
   const active = window.location.pathname === to;
 
@@ -85,12 +135,24 @@ function ListItemLink(props) {
 
   return (
     <li>
-      <ListItem button dense component={renderLink} className={active ? classes.listLinkActive : classes.listLink}>
-        {icon ? 
-          <ListItemIcon className={active ? classes.activeIcon : null} style={{display: "flex", justifyContent: collapsed ? "start" : "center"}}>
+      <ListItem
+        disabled={disabled}
+        button
+        dense
+        component={renderLink}
+        className={active ? classes.listLinkActive : classes.listLink}
+      >
+        {icon ? (
+          <ListItemIcon
+            className={classes.icon}
+            style={{
+              display: "flex",
+              justifyContent: collapsed ? "start" : "center",
+            }}
+          >
             {icon}
-          </ListItemIcon> 
-        : null}
+          </ListItemIcon>
+        ) : null}
         <ListItemText primary={primary} />
       </ListItem>
     </li>
@@ -160,20 +222,28 @@ const MainListItems = (props) => {
   const [connectionWarning, setConnectionWarning] = useState(false);
   const [openCampaignSubmenu, setOpenCampaignSubmenu] = useState(false);
   const [showCampaigns, setShowCampaigns] = useState(false);
+  const [userMenuEl, setUserMenuEl] = useState(null);
+  const [userModalOpen, setUserModalOpen] = useState(false);
   const history = useHistory();
 
   const [invisible, setInvisible] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
   const [searchParam] = useState("");
   const [chats, dispatch] = useReducer(reducer, []);
+  const [volume, setVolume] = useState(localStorage.getItem("volume") || 1);
+
+  const classes = useStyles();
+  const theme = useTheme();
+
+  const { colorMode } = useContext(ColorModeContext);
 
   const listSubHeaderStyle = {
     position: "relative",
-    color: "grey",
+    color: "#fff",
     fontSize: "12px",
     textAlign: "left",
     paddingLeft: 12,
-    fontWeight: "bold"
+    fontWeight: "bold",
   };
 
   useEffect(() => {
@@ -263,14 +333,34 @@ const MainListItems = (props) => {
     }
   };
 
+  const handleRefreshPage = () => {
+    window.location.reload(false);
+  };
+
+  const handleOpenUserMenu = (event) => {
+    setUserMenuEl(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setUserMenuEl(null);
+  };
+
+  const toggleColorMode = () => {
+    colorMode.toggleColorMode();
+  };
+
+  const handleOpenUserModal = () => {
+    setUserModalOpen(true);
+    handleCloseUserMenu();
+  };
+
   const handleClickLogout = () => {
-    //handleCloseMenu();
+    handleCloseUserMenu();
     handleLogout();
   };
 
   return (
     <div onClick={drawerClose}>
-
       <Can
         role={user.profile}
         perform={"drawer-admin-items:view"}
@@ -280,7 +370,8 @@ const MainListItems = (props) => {
               hidden={collapsed}
               style={listSubHeaderStyle}
               inset
-              color="inherit">
+              color="inherit"
+            >
               {i18n.t("Gerência")}
             </ListSubheader>
             <ListItemLink
@@ -301,16 +392,16 @@ const MainListItems = (props) => {
         }}
         no={() => (
           <>
-            <Divider style={{margin: "1rem auto"}}/>
+            <Divider style={{ margin: "1rem auto" }} />
             <ListSubheader
               hidden={collapsed}
               style={listSubHeaderStyle}
               inset
-              color="inherit">
+              color="inherit"
+            >
               {i18n.t("Atendimento")}
             </ListSubheader>
             <>
-
               <ListItemLink
                 collapsed={collapsed}
                 to="/tickets"
@@ -329,27 +420,41 @@ const MainListItems = (props) => {
                 primary="Kanban"
                 icon={<LoyaltyRoundedIcon />}
               />
-              <ListItemLink collapsed={collapsed}
+              <ListItemLink
+                collapsed={collapsed}
+                to="/chat-flow"
+                primary="Chat flow"
+                // primary={"Chat flow"}
+                // icon={<AccountTreeIcon />}
+                icon={<LockIcon />}
+                disabled={true}
+              />
+              <ListItemLink
+                collapsed={collapsed}
                 to="/todolist"
                 primary={i18n.t("Tarefas")}
                 icon={<BorderColorIcon />}
               />
-              <ListItemLink collapsed={collapsed}
+              <ListItemLink
+                collapsed={collapsed}
                 to="/contacts"
                 primary={i18n.t("mainDrawer.listItems.contacts")}
                 icon={<ContactPhoneOutlinedIcon />}
               />
-              <ListItemLink collapsed={collapsed}
+              <ListItemLink
+                collapsed={collapsed}
                 to="/schedules"
                 primary={i18n.t("mainDrawer.listItems.schedules")}
                 icon={<EventIcon />}
               />
-              <ListItemLink collapsed={collapsed}
+              <ListItemLink
+                collapsed={collapsed}
                 to="/tags"
                 primary={i18n.t("mainDrawer.listItems.tags")}
                 icon={<LocalOfferIcon />}
               />
-              <ListItemLink collapsed={collapsed}
+              <ListItemLink
+                collapsed={collapsed}
                 to="/chats"
                 primary={i18n.t("mainDrawer.listItems.chats")}
                 icon={
@@ -358,7 +463,8 @@ const MainListItems = (props) => {
                   </Badge>
                 }
               />
-              <ListItemLink collapsed={collapsed}
+              <ListItemLink
+                collapsed={collapsed}
                 to="/helps"
                 primary={i18n.t("mainDrawer.listItems.helps")}
                 icon={<HelpOutlineIcon />}
@@ -372,12 +478,13 @@ const MainListItems = (props) => {
         perform="drawer-admin-items:view"
         yes={() => (
           <>
-            <Divider style={{margin: "1rem auto 0"}}/>
+            <Divider style={{ margin: "1rem auto 0" }} />
             <ListSubheader
               hidden={collapsed}
               style={listSubHeaderStyle}
               inset
-              color="inherit">
+              color="inherit"
+            >
               {i18n.t("mainDrawer.listItems.administration")}
             </ListSubheader>
 
@@ -387,8 +494,15 @@ const MainListItems = (props) => {
                   button
                   onClick={() => setOpenCampaignSubmenu((prev) => !prev)}
                 >
-                  <ListItemIcon style={{display: "flex", justifyContent: collapsed ? "start" : "center"}}>
-                    <EventAvailableIcon/>
+                  <ListItemIcon
+                    style={{
+                      display: "flex",
+                      justifyContent: collapsed ? "start" : "center",
+                    }}
+                  >
+                    <EventAvailableIcon style={{
+                          color: "white",
+                        }} />
                   </ListItemIcon>
                   <ListItemText
                     primary={i18n.t("mainDrawer.listItems.campaigns")}
@@ -408,7 +522,9 @@ const MainListItems = (props) => {
                   <List component="div" disablePadding>
                     <ListItem onClick={() => history.push("/campaigns")} button>
                       <ListItemIcon>
-                        <ListIcon />
+                        <ListIcon style={{
+                          color: "white",
+                        }}/>
                       </ListItemIcon>
                       <ListItemText primary="Listagem" />
                     </ListItem>
@@ -417,7 +533,9 @@ const MainListItems = (props) => {
                       button
                     >
                       <ListItemIcon>
-                        <PeopleIcon />
+                        <PeopleIcon style={{
+                          color: "white",
+                        }}/>
                       </ListItemIcon>
                       <ListItemText primary="Listas de Contatos" />
                     </ListItem>
@@ -426,7 +544,9 @@ const MainListItems = (props) => {
                       button
                     >
                       <ListItemIcon>
-                        <SettingsOutlinedIcon />
+                        <SettingsOutlinedIcon style={{
+                          color: "white",
+                        }} />
                       </ListItemIcon>
                       <ListItemText primary="Configurações" />
                     </ListItem>
@@ -435,7 +555,8 @@ const MainListItems = (props) => {
               </>
             )}
             {user.super && (
-              <ListItemLink collapsed={collapsed}
+              <ListItemLink
+                collapsed={collapsed}
                 to="/announcements"
                 primary={i18n.t("mainDrawer.listItems.annoucements")}
                 icon={<AnnouncementIcon />}
@@ -447,7 +568,8 @@ const MainListItems = (props) => {
               primary={i18n.t("mainDrawer.listItems.prompts")}
               icon={<BlurCircular />}
             />
-            <ListItemLink collapsed={collapsed}
+            <ListItemLink
+              collapsed={collapsed}
               to="/connections"
               primary={i18n.t("mainDrawer.listItems.connections")}
               icon={
@@ -456,51 +578,164 @@ const MainListItems = (props) => {
                 </Badge>
               }
             />
-            <ListItemLink collapsed={collapsed}
+            <ListItemLink
+              collapsed={collapsed}
               to="/files"
               primary={i18n.t("mainDrawer.listItems.files")}
               icon={<AttachFile />}
             />
-            <ListItemLink collapsed={collapsed}
+            <ListItemLink
+              collapsed={collapsed}
               to="/queues"
               primary={i18n.t("mainDrawer.listItems.queues")}
               icon={<AccountTreeOutlinedIcon />}
             />
-            <ListItemLink collapsed={collapsed}
+            <ListItemLink
+              collapsed={collapsed}
               to="/users"
               primary={i18n.t("mainDrawer.listItems.users")}
               icon={<PeopleAltOutlinedIcon />}
             />
-            <ListItemLink collapsed={collapsed}
+            <ListItemLink
+              collapsed={collapsed}
               to="/messages-api"
               primary={i18n.t("mainDrawer.listItems.messagesAPI")}
               icon={<CodeRoundedIcon />}
             />
-            <ListItemLink collapsed={collapsed}
+            <ListItemLink
+              collapsed={collapsed}
               to="/financeiro"
               primary={i18n.t("mainDrawer.listItems.financeiro")}
               icon={<LocalAtmIcon />}
             />
 
             <ListItemLink
-              to="/settings" collapsed={collapsed}
+              to="/settings"
+              collapsed={collapsed}
               primary={i18n.t("mainDrawer.listItems.settings")}
               icon={<SettingsOutlinedIcon />}
             />
-
           </>
         )}
       />
-      <Divider style={{margin: "1rem auto 0"}}/>
-      <li>
-        <ListItem
-          button
-          dense
-          onClick={handleClickLogout}>
-          <ListItemIcon><RotateRight /></ListItemIcon>
-          <ListItemText primary={i18n.t("Sair")} />
-        </ListItem>
-      </li>
+      <Box
+        sx={{
+          position: "sticky",
+          bottom: 0,
+          bgcolor: "primarySwitch",
+        }}
+      >
+        <Divider style={{ margin: "1rem auto 0" }} />
+        <li>
+          <ListItem
+            button
+            dense
+            // onClick={handleClickLogout}
+            className={classes.floatingItem}
+          >
+            <ListItemAvatar>
+              <Avatar className={classes.avatarSize}>
+                {user?.name?.slice(0, 1).toUpperCase()}
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={user?.name?.substring(0,13)} />
+            <ListItemSecondaryAction>
+              <IconButton
+                edge="end"
+                aria-label="options"
+                aria-controls="user-menu"
+                aria-haspopup="true"
+                onClick={handleOpenUserMenu}
+              >
+                <MoreVertIcon style={{ color: "#FFF" }} />
+              </IconButton>
+              <Menu
+                id="user-menu"
+                anchorEl={userMenuEl}
+                keepMounted
+                open={Boolean(userMenuEl)}
+                onClose={handleCloseUserMenu}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    px: 1,
+                    color: "secondary",
+                  }}
+                >
+                  <NotificationsVolume setVolume={setVolume} volume={volume} />
+
+                  {/* <IconButton
+            onClick={handleRefreshPage}
+            aria-label={i18n.t("mainDrawer.appBar.refresh")}
+            color="inherit"
+          >
+            <CachedIcon />
+          </IconButton> */}
+
+                  {user.id && <NotificationsPopOver volume={volume} />}
+
+                  <AnnouncementsPopover />
+
+                  <IconButton
+                    onClick={handleRefreshPage}
+                    aria-label={i18n.t("mainDrawer.appBar.refresh")}
+                  >
+                    <CachedIcon />
+                  </IconButton>
+                </Box>
+
+                <StyledMenuItem onClick={handleOpenUserModal}>
+                  <ListItemIcon>
+                    <AccountCircle />
+                  </ListItemIcon>
+                  <ListItemText primary="Profile" />
+                </StyledMenuItem>
+
+                <StyledMenuItem onClick={toggleColorMode}>
+                  <ListItemIcon>
+                    {theme.mode === "dark" ? (
+                      <Brightness7Icon />
+                    ) : (
+                      <Brightness4Icon />
+                    )}
+                  </ListItemIcon>
+                  {theme.mode === "dark" ? (
+                    <ListItemText primary="Modo claro" />
+                  ) : (
+                    <ListItemText primary="Modo escuro" />
+                  )}
+                </StyledMenuItem>
+
+                <StyledMenuItem
+                  onClick={() =>
+                    window.open('https://bit.ly/support-litezap', "_blank")
+                  }
+                >
+                  <ListItemIcon>
+                    <HelpIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={i18n.t("Fale conosco")} />
+                </StyledMenuItem>
+
+                <StyledMenuItem onClick={handleClickLogout}>
+                  <ListItemIcon>
+                    <ExitToAppIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={i18n.t("Sair")} />
+                </StyledMenuItem>
+              </Menu>
+            </ListItemSecondaryAction>
+          </ListItem>
+        </li>
+      </Box>
+      <UserModal
+        open={userModalOpen}
+        onClose={() => setUserModalOpen(false)}
+        userId={user?.id}
+      />
     </div>
   );
 };
