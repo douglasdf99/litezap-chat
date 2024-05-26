@@ -427,7 +427,7 @@ const MainListItems = (props) => {
                 // primary={"Chat flow"}
                 // icon={<AccountTreeIcon />}
                 icon={<LockIcon />}
-                // disabled={true}
+                disabled={true}
               />
               <ListItemLink
                 collapsed={collapsed}
@@ -500,7 +500,9 @@ const MainListItems = (props) => {
                       justifyContent: collapsed ? "start" : "center",
                     }}
                   >
-                    <EventAvailableIcon />
+                    <EventAvailableIcon style={{
+                          color: "white",
+                        }} />
                   </ListItemIcon>
                   <ListItemText
                     primary={i18n.t("mainDrawer.listItems.campaigns")}
@@ -520,7 +522,9 @@ const MainListItems = (props) => {
                   <List component="div" disablePadding>
                     <ListItem onClick={() => history.push("/campaigns")} button>
                       <ListItemIcon>
-                        <ListIcon />
+                        <ListIcon style={{
+                          color: "white",
+                        }}/>
                       </ListItemIcon>
                       <ListItemText primary="Listagem" />
                     </ListItem>
@@ -529,7 +533,9 @@ const MainListItems = (props) => {
                       button
                     >
                       <ListItemIcon>
-                        <PeopleIcon />
+                        <PeopleIcon style={{
+                          color: "white",
+                        }}/>
                       </ListItemIcon>
                       <ListItemText primary="Listas de Contatos" />
                     </ListItem>
@@ -538,7 +544,9 @@ const MainListItems = (props) => {
                       button
                     >
                       <ListItemIcon>
-                        <SettingsOutlinedIcon />
+                        <SettingsOutlinedIcon style={{
+                          color: "white",
+                        }} />
                       </ListItemIcon>
                       <ListItemText primary="Configurações" />
                     </ListItem>
@@ -627,10 +635,10 @@ const MainListItems = (props) => {
           >
             <ListItemAvatar>
               <Avatar className={classes.avatarSize}>
-                {user.name.slice(0, 1).toUpperCase()}
+                {user?.name?.slice(0, 1).toUpperCase()}
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={user.name} />
+            <ListItemText primary={user?.name?.substring(0,13)} />
             <ListItemSecondaryAction>
               <IconButton
                 edge="end"
@@ -703,13 +711,13 @@ const MainListItems = (props) => {
 
                 <StyledMenuItem
                   onClick={() =>
-                    window.open(process.env.REACT_APP_SUPORT_LINK, "_blank")
+                    window.open('https://bit.ly/support-litezap', "_blank")
                   }
                 >
                   <ListItemIcon>
                     <HelpIcon />
                   </ListItemIcon>
-                  <ListItemText primary={i18n.t("Ajuda")} />
+                  <ListItemText primary={i18n.t("Fale conosco")} />
                 </StyledMenuItem>
 
                 <StyledMenuItem onClick={handleClickLogout}>

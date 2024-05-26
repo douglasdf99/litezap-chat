@@ -11,11 +11,13 @@ import {
 
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import { useLocation } from "react-router-dom";
 
 import MainListItems from "./MainListItems";
 import UserModal from "../components/UserModal";
 import { AuthContext } from "../context/Auth/AuthContext";
 import BackdropLoading from "../components/BackdropLoading";
+import PlanExpirationNotice from "../components/PlanExpirationNotice";
 import toastError from "../errors/toastError";
 
 import logo from "../assets/logo-white.svg";
@@ -166,7 +168,7 @@ const LoggedInLayout = ({ children }) => {
   const classes = useStyles();
   const location = useLocation();
   const [userModalOpen, setUserModalOpen] = useState(false);
-  const { loading } = useContext(AuthContext);
+  const { loading, user } = useContext(AuthContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerVariant, setDrawerVariant] = useState("permanent");
 

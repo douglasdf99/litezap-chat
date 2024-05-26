@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
 	root: {
 		width: "100vw",
 		height: "100vh",
-		background: "linear-gradient(to right, #0000FF , #0000CD , #00008B)",
+		background: "#F5F5F9",
 		//backgroundImage: "url(https://equipechat.com/imagens/equipechat.jpg)",
 		backgroundRepeat: "no-repeat",
 		backgroundSize: "100% 100%",
@@ -100,7 +100,7 @@ const Login = () => {
 			<CssBaseline/>
 			<div className={classes.paper}>
 				<div>
-					<img style={{ margin: "0 auto", width: "100%" }} src={logo} alt="Whats" />
+					<img style={{ margin: "0 auto", width: "250px" }} src={logo} alt="Whats" />
 				</div>
 				{/*<Typography component="h1" variant="h5">
 					{i18n.t("login.title")}
@@ -152,16 +152,16 @@ const Login = () => {
 								{i18n.t("login.buttons.register")}
 							</Link>
 						</Grid>
-            <Grid item>
-              <a
-                href={process.env.REACT_APP_SUPORT_LINK}
-                target="_blank"
-                className={classes.suport}
-              >
-                <HelpIcon style={{ color: "blue", marginRight: ".5rem" }} />
-                {i18n.t("login.buttons.suport")}
-              </a>
-            </Grid>
+						<Grid item style={{display: 'flex', alignItems: 'center'}}>
+							<HelpIcon style={{ color: "#377AFB" }} />
+							<Link
+								href={'https://bit.ly/support-litezap'}
+								variant="body2"
+								target="_blank"
+							>
+								{i18n.t("login.buttons.suport")}
+							</Link>
+						</Grid>
 					</Grid> }
 				</form>
 			</div>
