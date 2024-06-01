@@ -2,7 +2,8 @@ import { proto, WASocket } from "@whiskeysockets/baileys";
 import Contact from "../../models/Contact";
 import Setting from "../../models/Setting";
 import Ticket from "../../models/Ticket";
-import { getBodyMessage, isNumeric, sleep, validaCpfCnpj, sendMessageImage, sendMessageLink, makeid } from "./wbotMessageListener";
+import getBodyMessage from "./getBodyMessage";
+import { isNumeric, sleep, validaCpfCnpj, sendMessageImage, sendMessageLink, makeid } from "./wbotMessageListener";
 import formatBody from "../../helpers/Mustache";
 
 import puppeteer from "puppeteer";
