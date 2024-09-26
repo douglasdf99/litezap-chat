@@ -148,6 +148,22 @@ const handleChartbot = async (ticket, msg, wbot, dontReadTheFirstQuestion = fals
       ],
     });
 
+    const options = queueOptions.map(option => `*[ ${option.option} ]* - ${option.title}`).join('\n');
+
+    const textMessage = {
+      text: formatBody(`\u200e${queue.greetingMessage}\n\n${options}\n\n*[ 0 ]* - Menu anterior\n*[ # ]* - Menu inicial`, ticket.contact)
+    };
+
+    const lastMessageFromMe = await Message.findOne({
+      where: { ticketId: ticket.id, fromMe: true, body: textMessage.text },
+      order: [["createdAt", "DESC"]],
+    });
+
+    if (lastMessageFromMe && isWithinTimeWindow(lastMessageFromMe?.createdAt, 1)) {
+      console.log('aguando minutos')
+      return
+    }
+
     const companyId = ticket.companyId;
     const buttonActive = await Setting.findOne({ where: { key: "chatBotType", companyId } });
 
@@ -182,15 +198,11 @@ const handleChartbot = async (ticket, msg, wbot, dontReadTheFirstQuestion = fals
       where: { ticketId: ticket.id, fromMe: true, body: textMessage.text },
       order: [["createdAt", "DESC"]],
     });
-    console.log("lastMessageFromMe", lastMessageFromMe)
 
     if (lastMessageFromMe && isWithinTimeWindow(lastMessageFromMe?.createdAt, 1)) {
       console.log('aguando minutos')
       return
     }
- 
-    console.log("currentOption", currentOption)
-    console.log("queueOptions", queueOptions)
 
     const companyId = ticket.companyId;
     const buttonActive = await Setting.findOne({ where: { key: "chatBotType", companyId } });

@@ -27,6 +27,8 @@ import ShowFileService from "./services/FileServices/ShowService";
 import FilesOptions from './models/FilesOptions';
 import { addSeconds, differenceInSeconds } from "date-fns";
 import formatBody from "./helpers/Mustache";
+import { InvoiceCreatedEmail } from "./services/EmailServices/InvoiceCreatedEmail";
+import { sendEmail } from "./utils/sendEmail";
 
 
 const nodemailer = require('nodemailer');
@@ -800,43 +802,28 @@ async function handleInvoiceCreate() {
             { type: QueryTypes.INSERT }
           );
 
-          /*           let transporter = nodemailer.createTransport({
-                      service: 'gmail',
-                      auth: {
-                        user: 'email@gmail.com',
-                        pass: 'senha'
-                      }
-                    });
- 
-                    const mailOptions = {
-                      from: 'heenriquega@gmail.com', // sender address
-                      to: `${c.email}`, // receiver (use array of string for a list)
-                      subject: 'Fatura gerada - Sistema', // Subject line
-                      html: `Olá ${c.name} esté é um email sobre sua fatura!<br>
-          <br>
-          Vencimento: ${vencimento}<br>
-          Valor: ${plan.value}<br>
-          Link: ${process.env.FRONTEND_URL}/financeiro<br>
-          <br>
-          Qualquer duvida estamos a disposição!
-                      `// plain text body
-                    };
- 
-                    transporter.sendMail(mailOptions, (err, info) => {
-                      if (err)
-                        console.log(err)
-                      else
-                        console.log(info);
-                    }); */
+          const invoiceCreatedEmail = new InvoiceCreatedEmail();
+          const emailHtml = invoiceCreatedEmail.compileTemplate({
+            name: c.name,
+            value: plan.value,
+            date: vencimento,
+            invoice_detail: 'mensalidade',
+            id_invoice: '',
+            support_url: 'https://litezap.com/support',
+          });
+          try {
+            await sendEmail({
+              to: c.email,
+              subject: "Fatura gerada - Litezap",
+              html: emailHtml,
+            });
+            console.log("E-mail de do invoice enviado com sucesso para " + c.email);
+          } catch (error) {
+            console.error("Erro ao enviar e-mail de invoice", error);
+          }
 
         }
-
-
-
-
-
       }
-
     });
   });
   job.start()
