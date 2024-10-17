@@ -20,6 +20,7 @@
     "formik": "^2.2.0",
     "formik-material-ui": "^3.0.1",
     "gn-api-sdk-node": "^3.0.2",
+    "helmet": "^8.0.0",
     "i18next": "^19.8.2",
     "i18next-browser-languagedetector": "^6.0.1",
     "markdown-to-jsx": "^7.1.0",
